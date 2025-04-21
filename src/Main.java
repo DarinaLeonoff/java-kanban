@@ -34,14 +34,17 @@ public class Main {
         manager.removeEpic(4);
         printAll();
 
-        System.out.println("Remove all tasks");
-        manager.removeAll();
-        printAll();
     }
 
     private static void printAll(){
-        for(Task task : manager.getAllTasks().values()){
+        for(Task task : manager.getTasks()){
             System.out.println(task);
+        }
+        for(Epic epic : manager.getEpics()){
+            System.out.println(epic);
+            for(Subtask subtask : manager.getSubtasksFromEpic(epic.getId())){
+                System.out.println(subtask);
+            }
         }
     }
 }
