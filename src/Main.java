@@ -1,41 +1,46 @@
-import java.util.Scanner;
+import manager.TaskManager;
+import model.Epic;
+import model.Status;
+import model.Subtask;
+import model.Task;
 
 public class Main {
     private static TaskManager manager = new TaskManager();
-    private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        Task task1 = manager.createTask("Task 1", "desc 1", "NEW");
-        Task task2 =manager.createTask("Task 2", "desc 2", "NEW");
-        Subtask subtask1 = manager.createSubtask(task2, "subTitle 2.1", "subdesc 2", "NEW");
-        task2 = manager.getTaskById(task2.getId());
-        Subtask subtask2 = manager.createSubtask(task2, "subTitle 2.2", "subdesc 2", "NEW");
-        Task task3 =manager.createTask("Task 3", "desc 3", "NEW");
-        Subtask subtask3 = manager.createSubtask(task3, "subTutle 3.1", "subdesc 3", "NEW");
-
+        manager.createTask(new Task(manager.getNewID(), "title1", "desc1", Status.NEW));
+        manager.createTask(new Task(manager.getNewID(), "title2", "desc2", Status.NEW));
+        manager.createSubtask(new Subtask(manager.getNewID(), "subtitle2.1", "subdesk", Status.NEW, 1));
+        manager.createSubtask(new Subtask(manager.getNewID(), "subtitle2.2", "subdesk", Status.NEW, 1));
+        manager.createTask(new Task(manager.getNewID(), "title3", "desc3", Status.NEW));
+        manager.createSubtask(new Subtask(manager.getNewID(), "subtitle3.1", "subdesk", Status.NEW, 4));
         printAll();
 
         System.out.println("Change status");
-        manager.changeStatus(0);
-        manager.changeStatus(2);
-        manager.changeStatus(5);
-
+        manager.updateTask(new Task(0, "Title", "Desc", Status.DONE));
+        manager.updateSubtask(new Subtask(2, "titte222", "desc", Status.DONE, 1));
+        manager.updateSubtask(new Subtask(5, "subtitle3333", "subdesk", Status.DONE, 4));
         printAll();
 
-        System.out.println("Remove task 1 and epic 2");
-        manager.removeTask(0);
-        manager.removeTask(1);
+        System.out.println("Get subtasks of 1 epic");
+        System.out.println(manager.getEpicById(1));
+        for(Subtask subtask : manager.getSubtasksFromEpic(1)){
+            System.out.println(subtask);
+        }
 
+        System.out.println("Remove task 0, subtask 2, epic 4");
+        manager.removeTask(0);
+        manager.removeSubtask(2);
+        manager.removeEpic(4);
         printAll();
 
         System.out.println("Remove all tasks");
-        manager.removeAllTasks();
-
+        manager.removeAll();
         printAll();
     }
 
     private static void printAll(){
-        for(Task task : manager.getAllTasks()){
+        for(Task task : manager.getAllTasks().values()){
             System.out.println(task);
         }
     }

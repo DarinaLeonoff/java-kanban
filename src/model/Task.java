@@ -1,19 +1,21 @@
+package model;
+
 import java.util.Objects;
 
 public class Task {
+    private int id;
     private String title;
     private String description;
-    private int id;
     private Status status;
 
-    public Task(String title, String description, int id, Status status) {
+    public Task(int id, String title, String description, Status status) {
+        this.id = id;
         this.title = title;
         this.description = description;
-        this.id = id;
-        setStatus(status);
+        this.status = status;
     }
 
-    protected void setStatus(Status status){
+    public void setStatus(Status status){
         this.status = status;
     }
 
@@ -32,7 +34,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "\nTask{" +
+        return "\nmodel.Task{" +
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", id=" + id +
