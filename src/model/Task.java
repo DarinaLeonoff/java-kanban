@@ -8,13 +8,15 @@ public class Task {
     private String description;
     private Status status;
 
-    public Task(int id, String title, String description, Status status) {
-        this.id = id;
+    public Task(String title, String description, Status status) {
         this.title = title;
         this.description = description;
         this.status = status;
     }
 
+    public void setId(int id){
+        this.id = id;
+    }
     public void setStatus(Status status){
         this.status = status;
     }

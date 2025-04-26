@@ -5,12 +5,12 @@ import java.util.HashSet;
 public class Epic extends Task{
     private HashSet<Integer> subtasks = new HashSet<>();
 
-    public Epic(int id, String title, String description, Status status) {
-        super(id, title, description, status);
+    public Epic(String title, String description, Status status) {
+        super(title, description, status);
     }
 
     public Epic(Task task, int subtaskId) {
-        super(task.getId(), task.getTitle(), task.getDescription(), task.getStatus());
+        super(task.getTitle(), task.getDescription(), task.getStatus());
         subtasks.add(subtaskId);
     }
 
