@@ -24,22 +24,19 @@ public class Main {
         manager.updateSubtask(2, new Subtask("titte222", "desc", Status.IN_PROGRESS, 1));
         manager.updateSubtask(5, new Subtask( "subtitle3333", "subdesk", Status.IN_PROGRESS, 4));
         printAll();
-//
-//        System.out.println("Get subtasks of 1 epic");
-//        System.out.println(manager.getEpicById(1));
-//        for(Subtask subtask : manager.getSubtasksFromEpic(1)){
-//            System.out.println(subtask);
-//        }
-//
-//        System.out.println("Remove task 0, subtask 2, epic 4");
-//        manager.removeTask(0);
-//        manager.removeSubtask(2);
-//        manager.removeEpic(4);
-//        printAll();
 
-//        System.out.println("Remove all tasks");
-//        manager.removeAll();
-//        printAll();
+        System.out.println("Get subtasks of 1 epic");
+        System.out.println(manager.getEpicById(1));
+        for(Subtask subtask : manager.getSubtasksFromEpic(1)){
+            System.out.println(subtask);
+        }
+
+        System.out.println("Remove task 0, subtask 2, epic 4");
+        manager.removeTask(0);
+        manager.removeSubtask(2);
+        manager.removeEpic(4);
+        printAll();
+
     }
 
     private static void printAll(){
