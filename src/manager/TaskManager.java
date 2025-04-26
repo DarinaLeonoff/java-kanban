@@ -39,11 +39,9 @@ public class TaskManager {
 
     public void removeAllTasks() {
         tasks.clear();
-    } //done
+    }
 
     //Epic methods
-//    public
-//    Аналогично про присвоение id, как и в createTask
     public void createEpic(Epic epic) {
         epic.setId(getNewID());
         epics.put(epic.getId(), epic);
@@ -64,30 +62,14 @@ public class TaskManager {
             epicSubtasks.add(subtasks.get(id));
         }
         return epicSubtasks;
-    }//done
+    }
 
-    //    Метод должен быть публичный и должен обновлять поля
-//    title/description в эпике. Для обновления статуса эпика надо сделать
-//    отдельный приватный метод (и использовать его в тех местах, где сейчас
-//    используется updateEpic)
-    private void updateEpic(Epic epic) {
-        int doneTasks = 0;
-        for (int subtaskId : epic.getSubtasks()) {
-            if (subtasks.get(subtaskId).getStatus() == Status.DONE) {
-                doneTasks++;
-            }
-        }
-        Status status;
-        if (doneTasks == epic.getSubtasks().size()) {
-            status = Status.DONE;
-        } else if (doneTasks == 0) {
-            status = Status.NEW;
-        } else {
-            status = Status.IN_PROGRESS;
-        } //Если будет NEW подзадача и IN_PROGRESS подзадача, то статус должен быть IN_PROGRESS
-        Epic newEpic = new Epic(epic.getTitle(), epic.getDescription(), status);
-        //Надо пояснение, зачем здесь создается новый эпик, если можно статус присвоить в аргумент epic
-        epics.put(epic.getId(), newEpic);
+    public void updateEpic(int epicId, String title, String description) {
+        Epic epic = epics.get(epicId);
+        Epic newEpic = new Epic(title, description, epic.getStatus());
+        newEpic.setId(epicId);
+        newEpic.setSubtasks(epic.getSubtasks());
+        epics.put(epicId, newEpic);
     }
 
     public void removeEpic(int epicId) {
@@ -97,27 +79,19 @@ public class TaskManager {
         epics.remove(epicId);
     }
 
-    public void removeAllEpics() {
+    public void removeEpics() {
         epics.clear();
-        subtasks.clear(); // Будет вызываться лишняя логика, лучше subtasks.clear();
+        subtasks.clear();
     }
 
     //Subtask
-//    Доработать присвоение id, см. комментарий к createTask
-//Логика работы метода не ясна, эпик ищется в tasks и пересоздается (???). Если в epics не хранится эпик с заданным в подзадаче epicId, то она не должна создаваться вообще
-//После добавления подзадачи надо обновлять статус её эпика
     public void createSubtask(Subtask subtask) {
-        subtask.setId(getNewID());
-        int epicId = subtask.getEpicId();
-        //        if(tasks.containsKey(epicId)){
-        //Почему tasks? Эпики хранятся в другой мапе
-        if (tasks.containsKey(epicId)) {
-            createEpic(new Epic(tasks.get(epicId), subtask.getId()));
-            removeTask(epicId);
-        } else {
-            epics.get(epicId).setSubtask(subtask.getId());
-        }
-        subtasks.put(subtask.getId(), subtask);
+        int newId = getNewID();
+        subtask.setId(newId);
+        epics.get(subtask.getEpicId()).setSubtask(newId);
+        subtasks.put(newId, subtask);
+        //TODO update epic status
+        updeteEpicState(epics.get(subtask.getEpicId()));
     }
 
     public Subtask getSubtaskById(int subtaskId) {
@@ -128,9 +102,10 @@ public class TaskManager {
         return new ArrayList<>(subtasks.values());
     }
 
-    public void updateSubtask(Subtask subtask) {
-        subtasks.put(subtask.getId(), subtask);
-        updateEpic(epics.get(subtask.getEpicId()));
+    public void updateSubtask(int subId, Subtask subtask) {
+        subtasks.put(subId, subtask);
+//      FIXME update status epic
+        updeteEpicState(epics.get(subtask.getEpicId()));
     }
 
     public void removeSubtask(int subtaskId) {
@@ -138,18 +113,39 @@ public class TaskManager {
         Epic epic = epics.get(subtask.getEpicId());
         epic.removeSubtask(subtaskId);
         subtasks.remove(subtaskId);
-        updateEpic(epic);
+//        FIXME update status epic
+        updeteEpicState(epic);
     }
 
     public void removeAllSubtasks() {
         subtasks.clear();
+        //TODO
         //Помимо удаления подзадач надо ещё списки внутри эпиков очистить, и всем присвоить статус NEW (метод на обновление эпика вызывать не надо)
         //достаточно пройтись по всем эпикам в цикле
     }
 
-    //general methods
-    //private, вне класса не используется
     private int getNewID() {
         return id++;
+    }
+
+    private void updeteEpicState(Epic epic) { //TODO
+        int done = 0;
+        for (int subId : epic.getSubtasks()) {
+            Status status = subtasks.get(subId).getStatus();
+            if (status == Status.IN_PROGRESS) {
+                done = -1;
+                break;
+            }
+            done += status == Status.DONE ? 1 : 0;
+        }
+        if (done == 0) {
+            epic.setStatus(Status.NEW);
+        } else if (done == -1) {
+            epic.setStatus(Status.IN_PROGRESS);
+        } else if (done == epic.getSubtasks().size()) {
+            epic.setStatus(Status.DONE);
+        } else {
+            epic.setStatus(Status.IN_PROGRESS);
+        }
     }
 }

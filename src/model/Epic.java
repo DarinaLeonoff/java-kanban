@@ -9,13 +9,11 @@ public class Epic extends Task{
         super(title, description, status);
     }
 
-    public Epic(Task task, int subtaskId) {
-        super(task.getTitle(), task.getDescription(), task.getStatus());
-        subtasks.add(subtaskId);
-    }
-
     public void setSubtask(int id){
         subtasks.add(id);
+    }
+    public void setSubtasks(HashSet<Integer> subtasks){
+        this.subtasks = subtasks;
     }
     public HashSet<Integer> getSubtasks(){
         return subtasks;
