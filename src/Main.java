@@ -8,18 +8,21 @@ public class Main {
     private static TaskManager manager = new TaskManager();
 
     public static void main(String[] args) {
-        manager.createTask(new Task(manager.getNewID(), "title1", "desc1", Status.NEW));
-        manager.createTask(new Task(manager.getNewID(), "title2", "desc2", Status.NEW));
-        manager.createSubtask(new Subtask(manager.getNewID(), "subtitle2.1", "subdesk", Status.NEW, 1));
-        manager.createSubtask(new Subtask(manager.getNewID(), "subtitle2.2", "subdesk", Status.NEW, 1));
-        manager.createTask(new Task(manager.getNewID(), "title3", "desc3", Status.NEW));
-        manager.createSubtask(new Subtask(manager.getNewID(), "subtitle3.1", "subdesk", Status.NEW, 4));
+        manager.createTask(new Task( "title1", "desc1", Status.NEW));
+
+        manager.createEpic(new Epic("title2", "desc2", Status.NEW));
+        manager.createSubtask(new Subtask( "subtitle2.1", "subdesk", Status.NEW, 1));
+        manager.createSubtask(new Subtask("subtitle2.2", "subdesk", Status.NEW, 1));
+
+        manager.createEpic(new Epic("title3", "desc3", Status.NEW));
+        manager.createSubtask(new Subtask("subtitle3.1", "subdesk", Status.NEW, 4));
         printAll();
 
-        System.out.println("Change status");
-        manager.updateTask(new Task(0, "Title", "Desc", Status.DONE));
-        manager.updateSubtask(new Subtask(2, "titte222", "desc", Status.DONE, 1));
-        manager.updateSubtask(new Subtask(5, "subtitle3333", "subdesk", Status.DONE, 4));
+        System.out.println("\n Change status");
+        manager.updateTask(new Task("Title", "Desc", Status.DONE));
+        manager.updateEpic(1, "new title", "new desc");
+        manager.updateSubtask(2, new Subtask("titte222", "desc", Status.IN_PROGRESS, 1));
+        manager.updateSubtask(5, new Subtask( "subtitle3333", "subdesk", Status.IN_PROGRESS, 4));
         printAll();
 
         System.out.println("Get subtasks of 1 epic");
@@ -40,9 +43,9 @@ public class Main {
         for(Task task : manager.getTasks()){
             System.out.println(task);
         }
-        for(Epic epic : manager.getEpics()){
+        for (Epic epic : manager.getEpics()){
             System.out.println(epic);
-            for(Subtask subtask : manager.getSubtasksFromEpic(epic.getId())){
+            for (Subtask subtask : manager.getSubtasksFromEpic(epic.getId())){
                 System.out.println(subtask);
             }
         }
