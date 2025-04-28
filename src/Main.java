@@ -20,9 +20,15 @@ public class Main {
 
         System.out.println("\n Change status");
         manager.updateTask(new Task("Title", "Desc", Status.DONE));
-        manager.updateEpic(1, "new title", "new desc");
-        manager.updateSubtask(2, new Subtask("titte222", "desc", Status.IN_PROGRESS, 1));
-        manager.updateSubtask(5, new Subtask( "subtitle3333", "subdesk", Status.IN_PROGRESS, 4));
+        Epic epic = new Epic("title new", "desc", Status.NEW);
+        epic.setId(1);
+        manager.updateEpic(epic);
+        Subtask subtask2 = new Subtask("titte222", "desc", Status.IN_PROGRESS, 1);
+        subtask2.setId(2);
+        manager.updateSubtask(subtask2);
+        Subtask subtask5 = new Subtask( "subtitle3333", "subdesk", Status.IN_PROGRESS, 4);
+        subtask5.setId(5);
+        manager.updateSubtask(subtask5);
         printAll();
 
         System.out.println("Get subtasks of 1 epic");
