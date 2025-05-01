@@ -1,11 +1,11 @@
-import manager.TaskManager;
+import manager.InMemoryTaskManager;
 import model.Epic;
 import model.Status;
 import model.Subtask;
 import model.Task;
 
 public class Main {
-    private static TaskManager manager = new TaskManager();
+    private static InMemoryTaskManager manager = new InMemoryTaskManager();
 
     public static void main(String[] args) {
         manager.createTask(new Task( "title1", "desc1", Status.NEW));
