@@ -8,12 +8,18 @@ import model.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 public class InMemoryTaskManager implements TaskManager {
     private int id = 0;
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private final LinkedList<Integer> history = new LinkedList<>();
+
+    public LinkedList<Integer> getHistory(){
+        return history;
+    }
 
     //Task methods
     @Override
@@ -34,6 +40,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(int taskId) {
+        addToHistory(taskId);
         return tasks.get(taskId);
     }
 
@@ -56,6 +63,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic getEpicById(int epicId) {
+        addToHistory(epicId);
         return epics.get(epicId);
     }
 
@@ -136,6 +144,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask getSubtaskById(int subtaskId) {
+        addToHistory(subtaskId);
         return subtasks.get(subtaskId);
     }
 
@@ -170,5 +179,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     private int getNewID() {
         return id++;
+    }
+
+    private void addToHistory(int id){
+        history.addLast(id);
+        if (history.size() > 10) {
+            history.removeFirst();
+        }
     }
 }
