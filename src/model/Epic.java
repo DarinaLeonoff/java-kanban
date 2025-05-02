@@ -9,8 +9,12 @@ public class Epic extends Task{
         super(title, description, status);
     }
 
-    public void setSubtask(int id){
-        subtasks.add(id);
+    public boolean setSubtask(int id){
+        if(this.getId() != id) {
+            subtasks.add(id);
+            return true;
+        }
+        return false;
     }
     public void setSubtasks(HashSet<Integer> subtasks){
         this.subtasks = subtasks;
