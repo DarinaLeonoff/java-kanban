@@ -163,6 +163,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeSubtask(int subtaskId) {
         Subtask subtask = subtasks.get(subtaskId);
+        if(subtask == null){
+            System.out.println("RemoveSubtask: subtask is null. no such id in subtasks");
+            return;
+        }
         Epic epic = epics.get(subtask.getEpicId());
         epic.removeSubtask(subtaskId);
         subtasks.remove(subtaskId);

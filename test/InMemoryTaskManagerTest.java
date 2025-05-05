@@ -7,6 +7,7 @@ import model.Subtask;
 import model.Task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class InMemoryTaskManagerTest {
@@ -17,11 +18,17 @@ public class InMemoryTaskManagerTest {
         Assertions.assertTrue(manager.getHistory().isEmpty());
     }
 
+    @BeforeEach
+    public void beforeEach(){
+        manager.removeAllTasks();
+        manager.removeAllSubtasks();
+        manager.removeEpics();
+    }
     @Test
-    public void creatingTasksTest(){
+    public void creatingTasksTest(){ //work only as single test
     Epic epic = new Epic("Epic", "it's a big task.", Status.DONE);
     manager.createEpic(epic);
-    Subtask subtask = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, 0);
+    Subtask subtask = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId());
     manager.createSubtask(subtask);
     Task task = new Task("Task", "it's a usual task.", Status.NEW);
     manager.createTask(task);
@@ -32,21 +39,27 @@ public class InMemoryTaskManagerTest {
 }
 
     @Test
-    public void updateTasksTest(){ // updated tasks are the same
-        Epic epic = new Epic("Epic", "it's a big task.", Status.DONE);
+    public void updateTasksTest(){ //work only as single test
+        Epic epic = new Epic("Epic", "it's a big task.", Status.NEW);
         manager.createEpic(epic);
-        Subtask subtask = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, 0);
+        Subtask subtask = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId());
         manager.createSubtask(subtask);
         Task task = new Task("Task", "it's a usual task.", Status.NEW);
         manager.createTask(task);
 
-        manager.updateEpic(new Epic("New Epic", "new desc", Status.NEW));
-        manager.updateSubtask(new Subtask("New sub", "new desc", Status.NEW, 0));
-        manager.updateTask(new Task("New task", "new desc", Status.NEW));
+        Epic newEpic = new Epic("New Epic", "new desc", Status.NEW);
+        newEpic.setId(epic.getId());
+        manager.updateEpic(newEpic);
+        Subtask newSubtask = new Subtask("New sub", "new desc", Status.NEW, epic.getId());
+        newSubtask.setId(subtask.getId());
+        manager.updateSubtask(newSubtask);
+        Task newTask = new Task("New task", "new desc", Status.NEW);
+        newTask.setId(task.getId());
+        manager.updateTask(newTask);
 
-        Assertions.assertSame(epic, manager.getEpicById(epic.getId()));
-        Assertions.assertSame(subtask, manager.getSubtaskById(subtask.getId()));
-        Assertions.assertSame(task, manager.getTaskById(task.getId()));
+        Assertions.assertEquals(epic, manager.getEpicById(epic.getId()));
+        Assertions.assertEquals(subtask, manager.getSubtaskById(subtask.getId()));
+        Assertions.assertEquals(task, manager.getTaskById(task.getId()));
     }
 
     @Test
@@ -75,7 +88,7 @@ public class InMemoryTaskManagerTest {
         Assertions.assertNotEquals(task, manager.getTaskById(1));
     }
     @Test
-    public void isTaskUnchengedAfterAddToManager(){
+    public void isTaskUnchangedAfterAddToManager(){
         Task task = new Task("task", "task description", Status.DONE);
         manager.createTask(task);
         Task task1 = manager.getTaskById(task.getId());

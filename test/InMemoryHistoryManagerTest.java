@@ -1,6 +1,5 @@
 import manager.HistoryManager;
 import manager.Managers;
-import model.Epic;
 import model.Status;
 import model.Task;
 import org.junit.jupiter.api.Assertions;
@@ -8,7 +7,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class InMemoryHistoryManagerTest {
     private static final HistoryManager manager = Managers.getDefaultHistory();

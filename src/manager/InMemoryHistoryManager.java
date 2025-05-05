@@ -13,7 +13,7 @@ public class InMemoryHistoryManager implements HistoryManager{
     @Override
     public void add(Task task) {
         if(task == null) {
-            System.out.println("Task not found in InMemoryManager.add()");
+            System.out.println("Task not found in HistoryManager.add()");
             return;
         }
         history.addLast(task);
