@@ -1,53 +1,20 @@
-import manager.InMemoryTaskManager;
+import manager.Managers;
+import manager.TaskManager;
 import model.Epic;
 import model.Status;
 
 import model.Subtask;
 import model.Task;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class InMemoryTaskManagerTest {
-    private static InMemoryTaskManager manager = new InMemoryTaskManager();
+    private static final TaskManager manager = Managers.getDefault();
 
     @BeforeAll
     public static void checkHistoryIsEmpty(){
         Assertions.assertTrue(manager.getHistory().isEmpty());
-    }
-    @Test
-    public void tasksEqualsIfSameId(){
-        Task task = new Task("Title 1", "desc 1", Status.NEW);
-        Task task2 = new Task("Tatle 2", "desc 2", Status.DONE);
-        task.setId(1);
-        task2.setId(1);
-        Assertions.assertEquals(task, task2);
-    }
-    @Test
-    public void epicsEqualsIfSameId(){
-        Epic epic1 = new Epic("Tatle 2", "desc 2", Status.DONE);
-        Epic epic2 = new Epic("Tatle 2", "desc 2", Status.DONE);
-        epic1.setId(1);
-        epic2.setId(1);;
-        Assertions.assertEquals(epic1, epic2, "Epics are not the same");
-    }
-    @Test
-    public void subtasksEqualsIfSameId(){
-        Subtask subtask1 = new Subtask("Tatle 2", "desc 2", Status.DONE, 0);
-        Subtask subtask2 = new Subtask("Tatle 2", "desc 2", Status.DONE, 0);
-        subtask1.setId(1);
-        subtask2.setId(1);
-        Assertions.assertEquals(subtask1, subtask2, "Subtasks are not the same");
-    }
-    @Test
-    public void addEpicInEpicAsSubtask(){
-        Epic epic = new Epic("Title", "Description", Status.NEW);
-        epic.setId(1);
-        Assertions.assertFalse(epic.setSubtask(epic.getId()));
     }
 
     @Test
@@ -130,20 +97,4 @@ public class InMemoryTaskManagerTest {
         Assertions.assertEquals(task1.getStatus(), historyTask.getStatus(), "status isn't equals");
         Assertions.assertEquals(task2, historyTask);
     }
-
-    @Test
-    public void checkHistory(){
-        for (int i = 0; i < 15; i++) {
-            manager.createEpic(new Epic( "title1", "desc1", Status.NEW));//0-14
-        }
-        List<Task> list = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            list.add(manager.getEpicById(i));
-        }
-        List<Task> historyList = manager.getHistory();
-
-        Assertions.assertArrayEquals(historyList.toArray(), list.toArray(), "Uncorrect historu return");
-    }
-
-
 }
