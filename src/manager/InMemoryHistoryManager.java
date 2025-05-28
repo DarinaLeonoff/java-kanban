@@ -15,8 +15,13 @@ public class InMemoryHistoryManager implements HistoryManager{
             System.out.println("Task not found in HistoryManager.add()");
             return;
         }
-        history.remove(task);
+        remove(task);
         history.addLast(task);
+    }
+
+    @Override
+    public void remove(Task task) {
+        history.remove(task);
     }
 
     @Override
