@@ -14,19 +14,17 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (task == null) {
             return;
         }
-        remove(task);
+        remove(task.getId());
         linkLast(task);
     }
 
     @Override
-    public void remove(Task task) {
-        if (task == null) {
+    public void remove(int id) {
+        Node node = history.get(id);
+        if (node == null || node.task == null) {
             return;
         }
-        Node node = history.get(task.getId());
-        if (node != null) {
-            removeNode(node);
-        }
+        removeNode(node);
     }
 
     @Override
