@@ -1,5 +1,5 @@
-import historyManager.HistoryManager;
-import historyManager.InMemoryHistoryManager;
+import manager.HistoryManager;
+import manager.InMemoryHistoryManager;
 import model.Status;
 import model.Task;
 import org.junit.jupiter.api.Assertions;

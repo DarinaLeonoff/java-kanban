@@ -1,4 +1,4 @@
-package historyManager;
+package manager;
 
 import model.Epic;
 import model.Subtask;

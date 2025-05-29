@@ -1,5 +1,5 @@
-import historyManager.Managers;
-import historyManager.TaskManager;
+import manager.Managers;
+import manager.TaskManager;
 import model.Epic;
 import model.Status;
 import model.Subtask;
