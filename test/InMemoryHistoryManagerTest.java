@@ -17,7 +17,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void testAddAndGetHistory(){
+    public void testAddAndGetHistory() {
         Task task1 = new Task("Task 1", "Description 1", Status.NEW);
         task1.setId(1);
 
@@ -35,7 +35,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void testAddDuplicateMovesToEnd(){
+    public void testAddDuplicateMovesToEnd() {
         Task task1 = new Task("Task 1", "Description", Status.NEW);
         task1.setId(1);
 

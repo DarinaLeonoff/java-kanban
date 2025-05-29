@@ -20,7 +20,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(Task task) {
-        if (task == null){
+        if (task == null) {
             return;
         }
         Node node = history.get(task.getId());

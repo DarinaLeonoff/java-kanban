@@ -14,32 +14,33 @@ public class InMemoryTaskManagerTest {
     private static final TaskManager manager = Managers.getDefault();
 
     @BeforeAll
-    public static void checkHistoryIsEmpty(){
+    public static void checkHistoryIsEmpty() {
         Assertions.assertTrue(manager.getHistory().isEmpty());
     }
 
     @BeforeEach
-    public void beforeEach(){
+    public void beforeEach() {
         manager.removeAllTasks();
         manager.removeAllSubtasks();
         manager.removeEpics();
     }
-    @Test
-    public void creatingTasksTest(){ //work only as single test
-    Epic epic = new Epic("Epic", "it's a big task.", Status.DONE);
-    manager.createEpic(epic);
-    Subtask subtask = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId());
-    manager.createSubtask(subtask);
-    Task task = new Task("Task", "it's a usual task.", Status.NEW);
-    manager.createTask(task);
-
-    Assertions.assertSame(task, manager.getTaskById(task.getId()));
-    Assertions.assertSame(epic, manager.getEpicById(epic.getId()));
-    Assertions.assertSame(subtask, manager.getSubtaskById(subtask.getId()));
-}
 
     @Test
-    public void updateTasksTest(){ //work only as single test
+    public void creatingTasksTest() { //work only as single test
+        Epic epic = new Epic("Epic", "it's a big task.", Status.DONE);
+        manager.createEpic(epic);
+        Subtask subtask = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId());
+        manager.createSubtask(subtask);
+        Task task = new Task("Task", "it's a usual task.", Status.NEW);
+        manager.createTask(task);
+
+        Assertions.assertSame(task, manager.getTaskById(task.getId()));
+        Assertions.assertSame(epic, manager.getEpicById(epic.getId()));
+        Assertions.assertSame(subtask, manager.getSubtaskById(subtask.getId()));
+    }
+
+    @Test
+    public void updateTasksTest() { //work only as single test
         Epic epic = new Epic("Epic", "it's a big task.", Status.NEW);
         manager.createEpic(epic);
         Subtask subtask = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId());
@@ -63,7 +64,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void removeTasksTest(){ // return null
+    public void removeTasksTest() { // return null
         Epic epic = new Epic("Epic", "it's a big task.", Status.DONE);
         manager.createEpic(epic);
         Subtask subtask = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, 0);
@@ -81,14 +82,15 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void setIdBeforeCreating(){
+    public void setIdBeforeCreating() {
         Task task = new Task("t", "d", Status.DONE);
         task.setId(1);
         manager.createTask(task);
         Assertions.assertNotEquals(task, manager.getTaskById(1));
     }
+
     @Test
-    public void isTaskUnchangedAfterAddToManager(){
+    public void isTaskUnchangedAfterAddToManager() {
         Task task = new Task("task", "task description", Status.DONE);
         manager.createTask(task);
         Task task1 = manager.getTaskById(task.getId());
@@ -96,8 +98,9 @@ public class InMemoryTaskManagerTest {
         Assertions.assertEquals(task.getDescription(), task1.getDescription(), "description are not the same");
         Assertions.assertEquals(task.getStatus(), task1.getStatus(), "status are not the same");
     }
+
     @Test
-    public void taskInHistoryNotEqualsTaskAfterApdate(){
+    public void taskInHistoryNotEqualsTaskAfterApdate() {
         Task task1 = new Task("Title", "Descriprion", Status.NEW);
         manager.createTask(task1);
         manager.getTaskById(task1.getId());

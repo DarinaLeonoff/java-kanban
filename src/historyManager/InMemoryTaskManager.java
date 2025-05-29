@@ -46,7 +46,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeAllTasks() {
-        for(Task task : tasks.values()){
+        for (Task task : tasks.values()) {
             historyManager.remove(task);
         }
         tasks.clear();
@@ -90,7 +90,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void updateEpicState(Epic epic) {
-        if(epic.getSubtasks().isEmpty()) {
+        if (epic.getSubtasks().isEmpty()) {
             epic.setStatus(Status.NEW);
             return;
         }
@@ -102,7 +102,7 @@ public class InMemoryTaskManager implements TaskManager {
                 epic.setStatus(Status.IN_PROGRESS);
                 return;
             }
-            if(status == Status.DONE) {
+            if (status == Status.DONE) {
                 done += 1;
             } else {
                 newSub += 1;
@@ -129,7 +129,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeEpics() {
-        for(Epic epic : epics.values()){
+        for (Epic epic : epics.values()) {
             historyManager.remove(epic);
         }
         epics.clear();
@@ -140,7 +140,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void createSubtask(Subtask subtask) {
         Epic epic = epics.get(subtask.getEpicId());
-        if(epic == null){
+        if (epic == null) {
             System.out.println("Epic with id " + subtask.getEpicId() + " doesn't exist.");
         } else {
             int newId = getNewID();
@@ -172,7 +172,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeSubtask(int subtaskId) {
         Subtask subtask = subtasks.get(subtaskId);
-        if(subtask == null){
+        if (subtask == null) {
             System.out.println("RemoveSubtask: subtask is null. no such id in subtasks");
             return;
         }
@@ -185,18 +185,18 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeAllSubtasks() {
-        for(Subtask subtask : subtasks.values()){
+        for (Subtask subtask : subtasks.values()) {
             historyManager.remove(subtask);
         }
         subtasks.clear();
-        for(Epic epic : epics.values()){
+        for (Epic epic : epics.values()) {
             epic.removeSubtasks();
             epic.setStatus(Status.NEW);
         }
     }
 
     @Override
-    public List<Task> getHistory(){
+    public List<Task> getHistory() {
         return historyManager.getHistory();
     }
 

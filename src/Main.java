@@ -34,18 +34,18 @@ public class Main {
         manager.getSubtaskById(subtask12.getId());
         manager.getSubtaskById(subtask11.getId());
         manager.getEpicById(epic1.getId());
-            System.out.println("1\n" + manager.getHistory()+"\n");
+        System.out.println("1\n" + manager.getHistory() + "\n");
         manager.getTaskById(task2.getId());
-            System.out.println(manager.getHistory()+"\n");
+        System.out.println(manager.getHistory() + "\n");
 
 
         // 4. Удалите задачу, которая есть в истории, и проверьте, что при печати она не будет выводиться.
         manager.removeTask(task2.getId());
-        System.out.println("2\n" + manager.getHistory()+"\n");
+        System.out.println("2\n" + manager.getHistory() + "\n");
 
         //5. Удалите эпик с тремя подзадачами и убедитесь, что из истории удалился как сам эпик, так и все его подзадачи.
         manager.removeEpic(epic1.getId());
-        System.out.println("3\n" + manager.getHistory()+"\n");
+        System.out.println("3\n" + manager.getHistory() + "\n");
     }
 
 }
