@@ -1,4 +1,4 @@
-package manager;
+package historyManager;
 
 import model.Epic;
 import model.Status;

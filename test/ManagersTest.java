@@ -1,5 +1,4 @@
-import manager.HistoryManager;
-import manager.Managers;
+import historyManager.Managers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
