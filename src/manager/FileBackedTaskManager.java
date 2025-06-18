@@ -19,7 +19,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.file = file;
     }
 
-    public void save() throws ManagerSaveException {// сохраняет текущее состояние менеджера в указанный файл
+    public void save() throws ManagerSaveException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
             List<Task> totalList = new ArrayList<>(this.getTasks());
             totalList.addAll(this.getEpics());
@@ -127,11 +127,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         save();
     }
 
-    /*храниение данных в формате
-        id,type,name,status,description,epic
-1,TASK,Task1,NEW,Description task1,
-2,EPIC,Epic2,DONE,Description epic2,
-3,SUBTASK,Sub Task2,DONE,Description sub task3,2 */
     private String toString(Task task) {
         int epicId = -1;
         TaskTypes type = null;
