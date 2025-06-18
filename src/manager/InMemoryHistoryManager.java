@@ -2,33 +2,98 @@ package manager;
 
 import model.Task;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-public class InMemoryHistoryManager implements HistoryManager{
-    private static final int MAX_HISTORY_SIZE = 10;
-    private final LinkedList<Task> history = new LinkedList<>();
+public class InMemoryHistoryManager implements HistoryManager {
+    private final HashMap<Integer, Node> history = new HashMap<>();
+    private Node first;
+    private Node last;
+
     @Override
     public void add(Task task) {
-        if(task == null) {
-            System.out.println("Task not found in HistoryManager.add()");
+        if (task == null) {
             return;
         }
-        history.addLast(task);
-        if (history.size() > MAX_HISTORY_SIZE) {
-            history.removeFirst();
+        remove(task.getId());
+        linkLast(task);
+    }
+
+    @Override
+    public void remove(int id) {
+        Node node = history.get(id);
+        if (node == null || node.task == null) {
+            return;
         }
+        removeNode(node);
     }
 
     @Override
     public List<Task> getHistory() {
-        return new ArrayList<>(history);
+        return getTasks();
     }
 
-    @Override
-    public int getMaxHistorySize(){
-        return MAX_HISTORY_SIZE;
+    public void linkLast(Task task) {
+        Node newNode = new Node(task);
+        if (last != null) {
+            last.next = newNode;
+            newNode.prev = last;
+        } else {
+            first = newNode;
+        }
+        last = newNode;
+        history.put(task.getId(), newNode);
     }
+
+    public List<Task> getTasks() {
+        List<Task> tasks = new ArrayList<>();
+        Node current = first;
+        while (current != null) {
+            tasks.add(current.task);
+            current = current.next;
+        }
+        return tasks;
+    }
+
+    public void removeNode(Node node) {
+        if (node.prev == null) {
+            first = node.next;
+        } else {
+            node.prev.next = node.next;
+        }
+
+        if (node.next == null) {
+            last = node.prev;
+        } else {
+            node.next.prev = node.prev;
+        }
+        history.remove(node.task.getId());
+    }
+
+    private class Node {
+        private Node next;
+        private Node prev;
+        private final Task task;
+
+        public Node(Task task) {
+            this.task = task;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            Node node = (Node) o;
+            return Objects.equals(task, node.task);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(task);
+        }
+    }
+
 }

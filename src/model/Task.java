@@ -14,17 +14,22 @@ public class Task {
         this.status = status;
     }
 
-    public void setId(int id){
+    public void setId(int id) {
         this.id = id;
     }
-    public void setStatus(Status status){
+
+    public void setStatus(Status status) {
         this.status = status;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Task task = (Task) o;
         return id == task.id;
     }
@@ -36,12 +41,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "\nmodel.Task{" +
-                "title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", id=" + id +
-                ", status=" + status +
-                ", " + getClass() +'}';
+        return "\nmodel.Task{" + "title='" + title + '\'' + ", description='" + description + '\'' + ", id=" + id + ", status=" + status + ", " + getClass() + '}';
     }
 
     public String getTitle() {
