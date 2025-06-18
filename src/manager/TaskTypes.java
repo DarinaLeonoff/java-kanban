@@ -1,7 +1,5 @@
 package manager;
 
-import model.Status;
-
 public enum TaskTypes {
     TASK, EPIC, SUBTASK;
 
