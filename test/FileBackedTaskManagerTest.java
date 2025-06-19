@@ -43,7 +43,6 @@ public class FileBackedTaskManagerTest {
         Epic epic = new Epic("e1", "ee1", Status.NEW);
         fbtm.createEpic(epic);
         epic.setId(0);
-
         List<Epic> loadedEpics = fbtm.getEpics();
         assertEquals(List.of(epic), loadedEpics, "Loaded epics do not match the saved one");
     }
@@ -54,12 +53,11 @@ public class FileBackedTaskManagerTest {
         fbtm.createEpic(epic); // ID = 0
 
         Subtask s1 = new Subtask("s1", "d1", Status.NEW, 0);
-        Subtask s2 = new Subtask("s1", "d1", Status.NEW, 0);
-        fbtm.createSubtask(s1); // ID = 1
-        fbtm.createSubtask(s2); // ID = 2
-
+        Subtask s2 = new Subtask("s2", "d2", Status.NEW, 0);
         s1.setId(1);
         s2.setId(2);
+        fbtm.createSubtask(s1); // ID = 1
+        fbtm.createSubtask(s2); // ID = 2
 
         List<Subtask> loadedSubtasks = fbtm.getSubtasks();
         assertEquals(List.of(s1, s2), loadedSubtasks, "Loaded subtasks do not match the saved ones");
@@ -69,18 +67,19 @@ public class FileBackedTaskManagerTest {
     public void shouldPersistAndReloadDataCorrectly() throws IOException {
         Task task = new Task("t1", "d1", Status.NEW);
         Epic epic = new Epic("e1", "ee1", Status.NEW);
-        fbtm.createTask(task);     // ID = 0
-        fbtm.createEpic(epic);     // ID = 1
-
         Subtask sub1 = new Subtask("s1", "d1", Status.NEW, 1);
         Subtask sub2 = new Subtask("s2", "d2", Status.DONE, 1);
-        fbtm.createSubtask(sub1);  // ID = 2
-        fbtm.createSubtask(sub2);  // ID = 3
 
         task.setId(0);
         epic.setId(1);
         sub1.setId(2);
         sub2.setId(3);
+
+        fbtm.createTask(task);     // ID = 0
+        fbtm.createEpic(epic);     // ID = 1
+        fbtm.createSubtask(sub1);  // ID = 2
+        fbtm.createSubtask(sub2);  // ID = 3
+
 
         // load data from file
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFile);

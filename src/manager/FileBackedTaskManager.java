@@ -1,15 +1,10 @@
 package manager;
 
 import exceptions.ManagerSaveException;
-import model.Epic;
-import model.Status;
-import model.Subtask;
-import model.Task;
+import model.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -21,11 +16,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public void save() throws ManagerSaveException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
-            List<Task> totalList = new ArrayList<>(this.getTasks());
-            totalList.addAll(this.getEpics());
-            totalList.addAll(this.getSubtasks());
-            for (Task task : totalList) {
-                writer.write(toString(task));
+            for (Task task : getTasks()) {
+                writer.write(CSVTaskConverter.taskToCSV(task));
+                writer.newLine();
+            }
+            for (Epic epic : getEpics()) {
+                writer.write(CSVTaskConverter.taskToCSV(epic));
+                writer.newLine();
+            }
+            for (Subtask subtask : getSubtasks()) {
+                writer.write(CSVTaskConverter.taskToCSV(subtask));
+                writer.newLine();
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Save exception");
@@ -39,14 +40,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             fbtm = new FileBackedTaskManager(file);
             String str = reader.readLine();
             while (str != null) {
-                Task task = fromString(str);
-                if (task instanceof Subtask) {
+                Task task = CSVTaskConverter.fromString(str);
+                fbtm.setMaxId(task.getId());
+                TaskType type = task.getType();
+                if (type == TaskType.SUBTASK) {
                     fbtm.createSubtask((Subtask) task);
-                } else if (task instanceof Epic) {
+
+                } else if (type == TaskType.EPIC) {
                     fbtm.createEpic((Epic) task);
                 } else {
                     fbtm.createTask(task);
                 }
+                reader.readLine(); //read blank line
                 str = reader.readLine();
             }
         } catch (IOException e) {
@@ -57,7 +62,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void createTask(Task task) {
-        super.createTask(task);
+        tasks.put(task.getId(), task);
         save();
     }
 
@@ -81,7 +86,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void createEpic(Epic epic) {
-        super.createEpic(epic);
+        epics.put(epic.getId(), epic);
         save();
     }
 
@@ -105,7 +110,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void createSubtask(Subtask subtask) {
-        super.createSubtask(subtask);
+        subtasks.put(subtask.getId(), subtask);
+        Epic epic = epics.get(subtask.getEpicId());
+        epic.setSubtask(subtask.getId());
+        updateEpic(epic);
         save();
     }
 
@@ -127,38 +135,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         save();
     }
 
-    private String toString(Task task) {
-        int epicId = -1;
-        TaskTypes type = null;
-        if (task instanceof Subtask) {
-            type = TaskTypes.SUBTASK;
-            epicId = ((Subtask) task).getEpicId();
-        } else if (task instanceof Epic) {
-            type = TaskTypes.EPIC;
-        } else {
-            type = TaskTypes.TASK;
-        }
-        String res = String.format("%d, %s, %s, %s, %s, %s%n", task.getId(), type, task.getTitle(), task.getStatus(), task.getDescription(), epicId == -1 ? "" : epicId);
-        return res;
+    private void setMaxId(int taskId) {
+        id = Integer.max(id, taskId);
     }
 
-    private static Task fromString(String taskStr) {
-        String[] taskArray = taskStr.split(", ");
-        switch (TaskTypes.toType(taskArray[1])) {
-            case TASK:
-                Task task = new Task(taskArray[2], taskArray[4], Status.toStatus(taskArray[3]));
-                task.setId(Integer.parseInt(taskArray[0]));
-                return task;
-            case EPIC:
-                Epic epic = new Epic(taskArray[2], taskArray[4], Status.toStatus(taskArray[3]));
-                epic.setId(Integer.parseInt(taskArray[0]));
-                return epic;
-            case SUBTASK:
-                Subtask subtask = new Subtask(taskArray[2], taskArray[4], Status.toStatus(taskArray[3]), Integer.parseInt(taskArray[5]));
-                subtask.setId(Integer.parseInt(taskArray[0]));
-                return subtask;
-            default:
-                return null;
-        }
-    }
 }
