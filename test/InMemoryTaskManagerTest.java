@@ -1,3 +1,4 @@
+import manager.InMemoryTaskManager;
 import manager.Managers;
 import manager.TaskManager;
 import model.Epic;
@@ -11,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class InMemoryTaskManagerTest {
-    private static final TaskManager manager = Managers.getDefault();
+    private static final TaskManager manager = new InMemoryTaskManager();
 
     @BeforeAll
     public static void checkHistoryIsEmpty() {
