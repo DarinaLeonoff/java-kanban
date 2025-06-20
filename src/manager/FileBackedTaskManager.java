@@ -44,12 +44,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 fbtm.setMaxId(task.getId());
                 TaskType type = task.getType();
                 if (type == TaskType.SUBTASK) {
-                    fbtm.createSubtask((Subtask) task);
-
+                    fbtm.subtasks.put(task.getId(), (Subtask) task);
                 } else if (type == TaskType.EPIC) {
-                    fbtm.createEpic((Epic) task);
+                    fbtm.epics.put(task.getId(), (Epic) task);
                 } else {
-                    fbtm.createTask(task);
+                    fbtm.tasks.put(task.getId(), task);
                 }
                 reader.readLine(); //read blank line
                 str = reader.readLine();
@@ -62,7 +61,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void createTask(Task task) {
-        tasks.put(task.getId(), task);
+        super.createTask(task);
         save();
     }
 
@@ -86,7 +85,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void createEpic(Epic epic) {
-        epics.put(epic.getId(), epic);
+        super.createEpic(epic);
         save();
     }
 
@@ -110,10 +109,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void createSubtask(Subtask subtask) {
-        subtasks.put(subtask.getId(), subtask);
-        Epic epic = epics.get(subtask.getEpicId());
-        epic.setSubtask(subtask.getId());
-        updateEpic(epic);
+        super.createSubtask(subtask);
         save();
     }
 
