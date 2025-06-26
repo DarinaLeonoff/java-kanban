@@ -1,5 +1,7 @@
 package model;
 
+import manager.TaskType;
+
 import java.util.Objects;
 
 public class Task {
@@ -54,6 +56,10 @@ public class Task {
 
     public int getId() {
         return id;
+    }
+
+    public TaskType getType() {
+        return TaskType.TASK;
     }
 
     public Status getStatus() {

@@ -1,5 +1,7 @@
 package model;
 
+import manager.TaskType;
+
 import java.util.HashSet;
 
 public class Epic extends Task {
@@ -31,5 +33,10 @@ public class Epic extends Task {
 
     public void removeSubtasks() {
         subtasks.clear();
+    }
+
+    @Override
+    public TaskType getType() {
+        return TaskType.EPIC;
     }
 }
