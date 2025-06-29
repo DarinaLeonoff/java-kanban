@@ -6,6 +6,7 @@ import model.Subtask;
 import model.Task;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
     protected int id = 0;
@@ -117,6 +118,13 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    private void updateEpicStartFinish(Epic epic){
+        List<Subtask> sortedList =
+                subtasks.values().stream().filter(subtask -> epic.getSubtasks().contains(subtask.getId())).
+                sorted(Comparator.comparing(Task::getStartTime)).toList();
+        epic.setStartFinish(sortedList.getFirst().getStartTime(), sortedList.getLast().getEndTime());
+    }
+
     @Override
     public void removeEpic(int epicId) {
         for (int subtaskId : epics.get(epicId).getSubtasks()) {
@@ -148,6 +156,7 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setSubtask(newId);
             subtasks.put(newId, subtask);
             updateEpicState(epic);
+            updateEpicStartFinish(epic);
         }
     }
 
@@ -166,7 +175,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubtask(Subtask subtask) {
         subtasks.put(subtask.getId(), subtask);
-        updateEpicState(epics.get(subtask.getEpicId()));
+        Epic epic = epics.get(subtask.getEpicId());
+        updateEpicState(epic);
+        updateEpicStartFinish(epic);
     }
 
     @Override
@@ -181,6 +192,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.removeSubtask(subtaskId);
         subtasks.remove(subtaskId);
         updateEpicState(epic);
+        updateEpicStartFinish(epic);
     }
 
     @Override

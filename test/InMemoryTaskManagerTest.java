@@ -11,6 +11,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class InMemoryTaskManagerTest {
     private static final TaskManager manager = new InMemoryTaskManager();
 
@@ -113,5 +116,22 @@ public class InMemoryTaskManagerTest {
         Assertions.assertEquals(task1.getDescription(), historyTask.getDescription(), "description isn't equals");
         Assertions.assertEquals(task1.getStatus(), historyTask.getStatus(), "status isn't equals");
         Assertions.assertEquals(task2, historyTask);
+    }
+
+    @Test
+    public void epicStartFinishDateFromSubtasks(){
+        Epic epic = new Epic("t", "d", Status.NEW);
+        manager.createEpic(epic);
+        LocalDateTime nowTime = LocalDateTime.now();
+        Subtask subtask1 = new Subtask("t1", "d1", Status.NEW, 0, nowTime, Duration.ofMinutes(20));
+        Subtask subtask2 = new Subtask("t1", "d1", Status.NEW, 0, subtask1.getEndTime(), Duration.ofMinutes(20));
+        Subtask subtask3 = new Subtask("t1", "d1", Status.NEW, 0, subtask2.getEndTime(), Duration.ofMinutes(20));
+        manager.createSubtask(subtask1);
+        manager.createSubtask(subtask2);
+        manager.createSubtask(subtask3);
+
+        Assertions.assertEquals(epic.getStartTime(), subtask1.getStartTime(), "Not same start date");
+        Assertions.assertEquals(epic.getEndTime(), subtask3.getEndTime(), "Not same finish date");
+        Assertions.assertEquals(epic.getDuration(), Duration.ofMinutes(60), "Not same duration");
     }
 }

@@ -18,6 +18,16 @@ public class Task {
         this.title = title;
         this.description = description;
         this.status = status;
+        duration = null;
+        startTime = null;
+    }
+
+    public Task(String title, String description, Status status, LocalDateTime startTime, Duration duration) {
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
     }
 
     public void setId(int id) {
@@ -72,5 +82,13 @@ public class Task {
 
     public LocalDateTime getEndTime(){
         return startTime.plus(duration);
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 }
