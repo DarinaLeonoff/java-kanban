@@ -2,6 +2,8 @@ package model;
 
 import manager.TaskType;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -9,6 +11,8 @@ public class Task {
     private String title;
     private String description;
     private Status status;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
     public Task(String title, String description, Status status) {
         this.title = title;
@@ -64,5 +68,9 @@ public class Task {
 
     public Status getStatus() {
         return status;
+    }
+
+    public LocalDateTime getEndTime(){
+        return startTime.plus(duration);
     }
 }
