@@ -18,18 +18,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class InMemoryTaskManagerTest {
-    private static final TaskManager manager = new InMemoryTaskManager();
-
-    @BeforeAll
-    public static void checkHistoryIsEmpty() {
-        Assertions.assertTrue(manager.getHistory().isEmpty());
-    }
-
+    TaskManager manager;
     @BeforeEach
     public void beforeEach() {
-        manager.removeAllTasks();
-        manager.removeAllSubtasks();
-        manager.removeEpics();
+       manager = new InMemoryTaskManager();
     }
 
     @Test
@@ -183,6 +175,33 @@ public class InMemoryTaskManagerTest {
                 subtask2.getEndTime().get(), Duration.ofMinutes(20));
         manager.createSubtask(subtask3);
         Task task = new Task("Task", "it's a usual task.", Status.NEW, null,
+                Duration.ofMinutes(20));
+        manager.createTask(task);
+        expectedList.add(subtask1);
+        expectedList.add(subtask2);
+        expectedList.add(subtask3);
+
+        List<Task> prioritizedTasks = ((InMemoryTaskManager)manager).getPrioritizedTasks();
+
+        Assertions.assertArrayEquals(expectedList.toArray(), prioritizedTasks.toArray(), "Not same array");
+    }
+
+    @Test
+    public void prioritizedTaskCheckOnIntersections(){
+        LocalDateTime nowTime = LocalDateTime.now();
+        List<Task> expectedList = new ArrayList<>();
+        Epic epic = new Epic("Epic", "it's a big task.", Status.DONE);
+        manager.createEpic(epic);
+        Subtask subtask1 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(), nowTime,
+                Duration.ofMinutes(20));
+        manager.createSubtask(subtask1);
+        Subtask subtask2 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(),
+                subtask1.getEndTime().get(), Duration.ofMinutes(20));
+        manager.createSubtask(subtask2);
+        Subtask subtask3 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(),
+                subtask2.getEndTime().get(), Duration.ofMinutes(20));
+        manager.createSubtask(subtask3);
+        Task task = new Task("Task", "it's a usual task.", Status.NEW, subtask3.getEndTime().get().minusMinutes(10),
                 Duration.ofMinutes(20));
         manager.createTask(task);
         expectedList.add(subtask1);
