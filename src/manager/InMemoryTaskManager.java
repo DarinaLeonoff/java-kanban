@@ -13,11 +13,15 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Epic> epics = new HashMap<>();
     protected final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     protected final HistoryManager historyManager = Managers.getDefaultHistory();
-    protected TreeSet<Task> prioritizedTasks =
-            new TreeSet<>((Task t1, Task t2) -> t1.getStartTime().get().isAfter(t2.getStartTime().get()) ? 1 : -1);
+    protected TreeSet<Task> prioritizedTasks = new TreeSet<>((Task t1, Task t2) -> t1.getStartTime().get().isAfter(t2.getStartTime().get()) ? 1 : -1);
 
-    public List<Task> getPrioritizedTasks(){
-       return new ArrayList<>(prioritizedTasks);
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks);
+    }
+    private void addPrioritizedTask(Task task){
+        if (task.getStartTime().isPresent()) {
+            prioritizedTasks.add(task);
+        }
     }
 
     //Task methods
@@ -25,14 +29,14 @@ public class InMemoryTaskManager implements TaskManager {
     public void createTask(Task task) {
         task.setId(getNewID());
         tasks.put(task.getId(), task);
-        prioritizedTasks.add(task);
+        addPrioritizedTask(task);
     }
 
     @Override
     public void updateTask(Task task) {
         prioritizedTasks.remove(tasks.get(task.getId()));
         tasks.put(task.getId(), task);
-        prioritizedTasks.add(task);
+        addPrioritizedTask(task);
     }
 
     @Override
@@ -128,11 +132,9 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private void updateEpicStartFinish(Epic epic){
-        List<Subtask> sortedList =
-                subtasks.values().stream().filter(subtask -> epic.getSubtasks().contains(subtask.getId()) && subtask.getStartTime().isPresent()).
-                sorted(Comparator.comparing((Task t) -> t.getStartTime().get())).toList();
-        if(sortedList.isEmpty()){
+    private void updateEpicStartFinish(Epic epic) {
+        List<Subtask> sortedList = subtasks.values().stream().filter(subtask -> epic.getSubtasks().contains(subtask.getId()) && subtask.getStartTime().isPresent()).sorted(Comparator.comparing((Task t) -> t.getStartTime().get())).toList();
+        if (sortedList.isEmpty()) {
             epic.setStartFinish(null, null);
         } else {
             epic.setStartFinish(sortedList.getFirst().getStartTime().get(), sortedList.getLast().getEndTime().get());
@@ -173,7 +175,7 @@ public class InMemoryTaskManager implements TaskManager {
             updateEpicState(epic);
             updateEpicStartFinish(epic);
         }
-        prioritizedTasks.add(subtask);
+        addPrioritizedTask(subtask);
     }
 
     @Override
@@ -195,7 +197,7 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = epics.get(subtask.getEpicId());
         updateEpicState(epic);
         updateEpicStartFinish(epic);
-        prioritizedTasks.add(subtask);
+        addPrioritizedTask(subtask);
     }
 
     @Override

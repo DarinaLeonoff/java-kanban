@@ -139,7 +139,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void prioritizedTaskLiastCheck(){
+    public void prioritizedTaskListCheck(){
         LocalDateTime nowTime = LocalDateTime.now();
         List<Task> expectedList = new ArrayList<>();
         Epic epic = new Epic("Epic", "it's a big task.", Status.DONE);
@@ -165,5 +165,32 @@ public class InMemoryTaskManagerTest {
 
         Assertions.assertArrayEquals(expectedList.toArray(), prioritizedTasks.toArray(), "Not same array");
 
+    }
+
+    @Test
+    public void prioritizedTaskWithNoData(){
+        LocalDateTime nowTime = LocalDateTime.now();
+        List<Task> expectedList = new ArrayList<>();
+        Epic epic = new Epic("Epic", "it's a big task.", Status.DONE);
+        manager.createEpic(epic);
+        Subtask subtask1 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(), nowTime,
+                Duration.ofMinutes(20));
+        manager.createSubtask(subtask1);
+        Subtask subtask2 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(),
+                subtask1.getEndTime().get(), Duration.ofMinutes(20));
+        manager.createSubtask(subtask2);
+        Subtask subtask3 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(),
+                subtask2.getEndTime().get(), Duration.ofMinutes(20));
+        manager.createSubtask(subtask3);
+        Task task = new Task("Task", "it's a usual task.", Status.NEW, null,
+                Duration.ofMinutes(20));
+        manager.createTask(task);
+        expectedList.add(subtask1);
+        expectedList.add(subtask2);
+        expectedList.add(subtask3);
+
+        List<Task> prioritizedTasks = ((InMemoryTaskManager)manager).getPrioritizedTasks();
+
+        Assertions.assertArrayEquals(expectedList.toArray(), prioritizedTasks.toArray(), "Not same array");
     }
 }
