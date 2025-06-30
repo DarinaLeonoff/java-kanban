@@ -13,6 +13,9 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class InMemoryTaskManagerTest {
     private static final TaskManager manager = new InMemoryTaskManager();
@@ -133,5 +136,34 @@ public class InMemoryTaskManagerTest {
         Assertions.assertEquals(epic.getStartTime().get(), subtask1.getStartTime().get(), "Not same start date");
         Assertions.assertEquals(epic.getEndTime().get(), subtask3.getEndTime().get(), "Not same finish date");
         Assertions.assertEquals(Duration.ofMinutes(60), epic.getDuration(), "Not same duration");
+    }
+
+    @Test
+    public void prioritizedTaskLiastCheck(){
+        LocalDateTime nowTime = LocalDateTime.now();
+        List<Task> expectedList = new ArrayList<>();
+        Epic epic = new Epic("Epic", "it's a big task.", Status.DONE);
+        manager.createEpic(epic);
+        Subtask subtask1 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(), nowTime,
+                Duration.ofMinutes(20));
+        manager.createSubtask(subtask1);
+        Subtask subtask2 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(),
+                subtask1.getEndTime().get(), Duration.ofMinutes(20));
+        manager.createSubtask(subtask2);
+        Subtask subtask3 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(),
+                subtask2.getEndTime().get(), Duration.ofMinutes(20));
+        manager.createSubtask(subtask3);
+        Task task = new Task("Task", "it's a usual task.", Status.NEW,  subtask3.getEndTime().get(),
+                Duration.ofMinutes(20));
+        manager.createTask(task);
+        expectedList.add(subtask1);
+        expectedList.add(subtask2);
+        expectedList.add(subtask3);
+        expectedList.add(task);
+
+        List<Task> prioritizedTasks = ((InMemoryTaskManager)manager).getPrioritizedTasks();
+
+        Assertions.assertArrayEquals(expectedList.toArray(), prioritizedTasks.toArray(), "Not same array");
+
     }
 }
