@@ -3,6 +3,7 @@ package manager;
 import model.Task;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class InMemoryHistoryManager implements HistoryManager {
     private final HashMap<Integer, Node> history = new HashMap<>();
@@ -47,10 +48,9 @@ public class InMemoryHistoryManager implements HistoryManager {
     public List<Task> getTasks() {
         List<Task> tasks = new ArrayList<>();
         Node current = first;
-        while (current != null) {
-            tasks.add(current.task);
-            current = current.next;
-        }
+        Stream.iterate(current, Objects::nonNull, node -> node.next) //создаёт поток узлов, начиная с current, пока не null
+                .map(node -> node.task)
+                .forEach(tasks::add);
         return tasks;
     }
 

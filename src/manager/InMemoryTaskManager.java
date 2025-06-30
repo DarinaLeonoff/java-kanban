@@ -6,6 +6,7 @@ import model.Subtask;
 import model.Task;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
     protected int id = 0;
@@ -69,10 +70,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeAllTasks() {
-        for (Task task : tasks.values()) {
-            historyManager.remove(task.getId());
-            prioritizedTasks.remove(task);
-        }
+        tasks.values().forEach(task -> {
+                    historyManager.remove(task.getId());
+                    prioritizedTasks.remove(task);
+                });
         tasks.clear();
     }
 
@@ -101,9 +102,9 @@ public class InMemoryTaskManager implements TaskManager {
     public ArrayList<Subtask> getSubtasksFromEpic(int epicId) {
         HashSet<Integer> epicSubtasksId = epics.get(epicId).getSubtasks();
         ArrayList<Subtask> epicSubtasks = new ArrayList<>();
-        for (int id : epicSubtasksId) {
-            epicSubtasks.add(subtasks.get(id));
-        }
+        epicSubtasksId.stream()
+                .map(subtasks::get)
+                .forEach(epicSubtasks::add);
         return epicSubtasks;
     }
 
@@ -124,25 +125,18 @@ public class InMemoryTaskManager implements TaskManager {
         }
         int done = 0;
         int newSub = 0;
-        for (int subId : epic.getSubtasks()) {
-            Status status = subtasks.get(subId).getStatus();
-            if (status == Status.IN_PROGRESS) {
-                epic.setStatus(Status.IN_PROGRESS);
-                return;
-            }
-            if (status == Status.DONE) {
-                done += 1;
-            } else {
-                newSub += 1;
-            }
-        }
-        if (done == epic.getSubtasks().size()) {
-            epic.setStatus(Status.DONE);
-        } else if (newSub == epic.getSubtasks().size()) {
-            epic.setStatus(Status.NEW);
-        } else {
+        List<Status> statuses = epic.getSubtasks().stream() //get status of each subtask
+                .map(subId -> subtasks.get(subId).getStatus())
+                .toList();
+
+        if (statuses.contains(Status.IN_PROGRESS)) {//if even 1 in progress - epic status is in progress
             epic.setStatus(Status.IN_PROGRESS);
+            return;
         }
+            long doneCount = statuses.stream().filter(s -> s == Status.DONE).count();
+            long newCount = statuses.size() - doneCount;
+            epic.setStatus(doneCount == statuses.size() ? Status.DONE : (newCount == statuses.size() ? Status.NEW :
+                    Status.IN_PROGRESS));
     }
 
     private void updateEpicStartFinish(Epic epic) {
@@ -156,11 +150,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeEpic(int epicId) {
-        for (int subtaskId : epics.get(epicId).getSubtasks()) {
-            historyManager.remove(subtaskId);
-            subtasks.remove(subtaskId);
-            prioritizedTasks.remove(subtasks.get(subtaskId));
-        }
+        epics.get(epicId).getSubtasks()
+                .forEach(subtaskId -> {
+                    Task subtask = subtasks.get(subtaskId);
+                    historyManager.remove(subtaskId);
+                    prioritizedTasks.remove(subtask);
+                    subtasks.remove(subtaskId);
+                });
         historyManager.remove(epicId);
         epics.remove(epicId);
     }
@@ -234,15 +230,15 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeAllSubtasks() {
-        for (Subtask subtask : subtasks.values()) {
+        subtasks.values().forEach(subtask -> {
             historyManager.remove(subtask.getId());
             prioritizedTasks.remove(subtask);
-        }
+        });
         subtasks.clear();
-        for (Epic epic : epics.values()) {
+        epics.values().forEach(epic -> {
             epic.removeSubtasks();
             epic.setStatus(Status.NEW);
-        }
+        });
     }
 
     @Override
