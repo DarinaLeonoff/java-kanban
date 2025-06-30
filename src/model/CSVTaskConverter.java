@@ -19,8 +19,10 @@ public class CSVTaskConverter {
         if (type == TaskType.SUBTASK) {
             epicId = ((Subtask) task).getEpicId();
         }
+        LocalDateTime startTime = task.getStartTime().orElse(null);
         return String.format("%d,%s,%s,%s,%s,%s,%s,%s,\n", task.getId(), type, task.getTitle(), task.getStatus(),
-                task.getDescription(), epicId, task.getStartTime().format(DateTimeFormatter.ISO_DATE_TIME),
+                task.getDescription(), epicId, startTime != null ? startTime.format(DateTimeFormatter.ISO_DATE_TIME)
+                        : null,
                 task.getDuration().toMinutes());
     }
 
@@ -36,7 +38,7 @@ public class CSVTaskConverter {
         int epicId = Integer.parseInt(taskArray[5]);
         LocalDateTime startTime = taskArray[6].equals("null") ? null : LocalDateTime.parse(taskArray[6],
                 DateTimeFormatter.ISO_DATE_TIME);
-        Duration duration = taskArray[7].equals("null") ? null : Duration.ofMinutes(Long.parseLong(taskArray[7]));
+        Duration duration = Duration.ofMinutes(Long.parseLong(taskArray[7]));
 
         switch (type) {
             case TASK:

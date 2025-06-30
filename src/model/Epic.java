@@ -5,9 +5,10 @@ import manager.TaskType;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Optional;
 
 public class Epic extends Task {
-    private LocalDateTime endTime;
+    private Optional<LocalDateTime> endTime;
     private HashSet<Integer> subtasks = new HashSet<>();
 
     public Epic(String title, String description, Status status) {
@@ -27,9 +28,9 @@ public class Epic extends Task {
     }
 
     public void setStartFinish(LocalDateTime start, LocalDateTime finish){
-        super.startTime = start;
-        endTime = finish;
-        super.duration = Duration.between(start, finish);
+        super.startTime = Optional.ofNullable(start);
+        endTime = Optional.ofNullable(finish);
+        super.duration = start == null ? Duration.ZERO : Duration.between(start, finish);
     }
 
     public HashSet<Integer> getSubtasks() {
@@ -50,7 +51,7 @@ public class Epic extends Task {
     }
 
     @Override
-    public LocalDateTime getEndTime() {
-        return super.getEndTime();
+    public Optional<LocalDateTime> getEndTime() {
+        return endTime;
     }
 }

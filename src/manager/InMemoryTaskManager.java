@@ -6,7 +6,6 @@ import model.Subtask;
 import model.Task;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
     protected int id = 0;
@@ -120,9 +119,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     private void updateEpicStartFinish(Epic epic){
         List<Subtask> sortedList =
-                subtasks.values().stream().filter(subtask -> epic.getSubtasks().contains(subtask.getId())).
-                sorted(Comparator.comparing(Task::getStartTime)).toList();
-        epic.setStartFinish(sortedList.getFirst().getStartTime(), sortedList.getLast().getEndTime());
+                subtasks.values().stream().filter(subtask -> epic.getSubtasks().contains(subtask.getId()) && subtask.getStartTime().isPresent()).
+                sorted(Comparator.comparing((Task t) -> t.getStartTime().get())).toList();
+        if(sortedList.isEmpty()){
+            epic.setStartFinish(null, null);
+        } else {
+            epic.setStartFinish(sortedList.getFirst().getStartTime().get(), sortedList.getLast().getEndTime().get());
+        }
     }
 
     @Override

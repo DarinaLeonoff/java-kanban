@@ -5,6 +5,7 @@ import manager.TaskType;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Task {
     private int id;
@@ -12,14 +13,14 @@ public class Task {
     private String description;
     private Status status;
     protected Duration duration;
-    protected LocalDateTime startTime;
+    protected Optional<LocalDateTime> startTime;
 
     public Task(String title, String description, Status status) {
         this.title = title;
         this.description = description;
         this.status = status;
-        duration = null;
-        startTime = null;
+        duration = Duration.ZERO;
+        startTime = Optional.empty();
     }
 
     public Task(String title, String description, Status status, LocalDateTime startTime, Duration duration) {
@@ -27,7 +28,7 @@ public class Task {
         this.description = description;
         this.status = status;
         this.duration = duration;
-        this.startTime = startTime;
+        this.startTime = Optional.ofNullable(startTime);
     }
 
     public void setId(int id) {
@@ -80,15 +81,19 @@ public class Task {
         return status;
     }
 
-    public LocalDateTime getEndTime(){
-        return startTime.plus(duration);
+    public Optional<LocalDateTime> getEndTime(){
+        if(startTime.isPresent()) {
+            return Optional.of(startTime.get().plus(duration));
+        } else {
+            return Optional.empty();
+        }
     }
 
     public Duration getDuration() {
         return duration;
     }
 
-    public LocalDateTime getStartTime() {
+    public Optional<LocalDateTime> getStartTime() {
         return startTime;
     }
 }

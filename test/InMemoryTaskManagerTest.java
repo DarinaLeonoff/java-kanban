@@ -124,14 +124,14 @@ public class InMemoryTaskManagerTest {
         manager.createEpic(epic);
         LocalDateTime nowTime = LocalDateTime.now();
         Subtask subtask1 = new Subtask("t1", "d1", Status.NEW, 0, nowTime, Duration.ofMinutes(20));
-        Subtask subtask2 = new Subtask("t1", "d1", Status.NEW, 0, subtask1.getEndTime(), Duration.ofMinutes(20));
-        Subtask subtask3 = new Subtask("t1", "d1", Status.NEW, 0, subtask2.getEndTime(), Duration.ofMinutes(20));
+        Subtask subtask2 = new Subtask("t1", "d1", Status.NEW, 0, subtask1.getEndTime().get(), Duration.ofMinutes(20));
+        Subtask subtask3 = new Subtask("t1", "d1", Status.NEW, 0, subtask2.getEndTime().get(), Duration.ofMinutes(20));
         manager.createSubtask(subtask1);
         manager.createSubtask(subtask2);
         manager.createSubtask(subtask3);
 
-        Assertions.assertEquals(epic.getStartTime(), subtask1.getStartTime(), "Not same start date");
-        Assertions.assertEquals(epic.getEndTime(), subtask3.getEndTime(), "Not same finish date");
-        Assertions.assertEquals(epic.getDuration(), Duration.ofMinutes(60), "Not same duration");
+        Assertions.assertEquals(epic.getStartTime().get(), subtask1.getStartTime().get(), "Not same start date");
+        Assertions.assertEquals(epic.getEndTime().get(), subtask3.getEndTime().get(), "Not same finish date");
+        Assertions.assertEquals(Duration.ofMinutes(60), epic.getDuration(), "Not same duration");
     }
 }
