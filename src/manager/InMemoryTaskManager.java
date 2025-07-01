@@ -126,7 +126,7 @@ public class InMemoryTaskManager implements TaskManager {
         List<Status> statuses = epic.getSubtasks().stream() //get status of each subtask
                 .map(subId -> subtasks.get(subId).getStatus()).toList();
 
-        if (statuses.contains(Status.IN_PROGRESS)) {//if even 1 in progress - epic status is in progress
+        if (statuses.contains(Status.IN_PROGRESS)) { //if even 1 in progress - epic status is in progress
             epic.setStatus(Status.IN_PROGRESS);
             return;
         }

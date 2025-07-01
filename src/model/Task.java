@@ -82,11 +82,7 @@ public class Task {
     }
 
     public Optional<LocalDateTime> getEndTime() {
-        if (startTime.isPresent()) {
-            return Optional.of(startTime.get().plus(duration));
-        } else {
-            return Optional.empty();
-        }
+        return startTime.map(localDateTime -> localDateTime.plus(duration));
     }
 
     public Duration getDuration() {
