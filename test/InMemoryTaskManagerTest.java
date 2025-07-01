@@ -1,5 +1,4 @@
 import manager.InMemoryTaskManager;
-import manager.Managers;
 import manager.TaskManager;
 import model.Epic;
 import model.Status;
@@ -7,95 +6,18 @@ import model.Status;
 import model.Subtask;
 import model.Task;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class InMemoryTaskManagerTest {
-    TaskManager manager;
+public class InMemoryTaskManagerTest extends TaskManagerTest{
     @BeforeEach
-    public void beforeEach() {
-       manager = new InMemoryTaskManager();
-    }
-
-    @Test
-    public void creatingTasksTest() { //work only as single test
-        Epic epic = new Epic("Epic", "it's a big task.", Status.DONE);
-        manager.createEpic(epic);
-        Subtask subtask = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId());
-        manager.createSubtask(subtask);
-        Task task = new Task("Task", "it's a usual task.", Status.NEW);
-        manager.createTask(task);
-
-        Assertions.assertSame(task, manager.getTaskById(task.getId()));
-        Assertions.assertSame(epic, manager.getEpicById(epic.getId()));
-        Assertions.assertSame(subtask, manager.getSubtaskById(subtask.getId()));
-    }
-
-    @Test
-    public void updateTasksTest() { //work only as single test
-        Epic epic = new Epic("Epic", "it's a big task.", Status.NEW);
-        manager.createEpic(epic);
-        Subtask subtask = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId());
-        manager.createSubtask(subtask);
-        Task task = new Task("Task", "it's a usual task.", Status.NEW);
-        manager.createTask(task);
-
-        Epic newEpic = new Epic("New Epic", "new desc", Status.NEW);
-        newEpic.setId(epic.getId());
-        manager.updateEpic(newEpic);
-        Subtask newSubtask = new Subtask("New sub", "new desc", Status.NEW, epic.getId());
-        newSubtask.setId(subtask.getId());
-        manager.updateSubtask(newSubtask);
-        Task newTask = new Task("New task", "new desc", Status.NEW);
-        newTask.setId(task.getId());
-        manager.updateTask(newTask);
-
-        Assertions.assertEquals(epic, manager.getEpicById(epic.getId()));
-        Assertions.assertEquals(subtask, manager.getSubtaskById(subtask.getId()));
-        Assertions.assertEquals(task, manager.getTaskById(task.getId()));
-    }
-
-    @Test
-    public void removeTasksTest() { // return null
-        Epic epic = new Epic("Epic", "it's a big task.", Status.DONE);
-        manager.createEpic(epic);
-        Subtask subtask = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, 0);
-        manager.createSubtask(subtask);
-        Task task = new Task("Task", "it's a usual task.", Status.NEW);
-        manager.createTask(task);
-
-        manager.removeTask(task.getId());
-        manager.removeEpic(epic.getId());
-        manager.removeSubtask(subtask.getId());
-
-        Assertions.assertNull(manager.getTaskById(task.getId()));
-        Assertions.assertNull(manager.getEpicById(epic.getId()));
-        Assertions.assertNull(manager.getSubtaskById(subtask.getId()));
-    }
-
-    @Test
-    public void setIdBeforeCreating() {
-        Task task = new Task("t", "d", Status.DONE);
-        task.setId(1);
-        manager.createTask(task);
-        Assertions.assertNotEquals(task, manager.getTaskById(1));
-    }
-
-    @Test
-    public void isTaskUnchangedAfterAddToManager() {
-        Task task = new Task("task", "task description", Status.DONE);
-        manager.createTask(task);
-        Task task1 = manager.getTaskById(task.getId());
-        Assertions.assertEquals(task.getTitle(), task1.getTitle(), "titles are not the same");
-        Assertions.assertEquals(task.getDescription(), task1.getDescription(), "description are not the same");
-        Assertions.assertEquals(task.getStatus(), task1.getStatus(), "status are not the same");
+    public void setUp() {
+        super.setUpTest(new InMemoryTaskManager());
     }
 
     @Test
@@ -153,7 +75,7 @@ public class InMemoryTaskManagerTest {
         expectedList.add(subtask3);
         expectedList.add(task);
 
-        List<Task> prioritizedTasks = ((InMemoryTaskManager)manager).getPrioritizedTasks();
+        List<Task> prioritizedTasks = manager.getPrioritizedTasks();
 
         Assertions.assertArrayEquals(expectedList.toArray(), prioritizedTasks.toArray(), "Not same array");
 
@@ -181,7 +103,7 @@ public class InMemoryTaskManagerTest {
         expectedList.add(subtask2);
         expectedList.add(subtask3);
 
-        List<Task> prioritizedTasks = ((InMemoryTaskManager)manager).getPrioritizedTasks();
+        List<Task> prioritizedTasks = manager.getPrioritizedTasks();
 
         Assertions.assertArrayEquals(expectedList.toArray(), prioritizedTasks.toArray(), "Not same array");
     }
@@ -208,7 +130,7 @@ public class InMemoryTaskManagerTest {
         expectedList.add(subtask2);
         expectedList.add(subtask3);
 
-        List<Task> prioritizedTasks = ((InMemoryTaskManager)manager).getPrioritizedTasks();
+        List<Task> prioritizedTasks = manager.getPrioritizedTasks();
 
         Assertions.assertArrayEquals(expectedList.toArray(), prioritizedTasks.toArray(), "Not same array");
     }

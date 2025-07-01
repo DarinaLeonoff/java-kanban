@@ -11,55 +11,61 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FileBackedTaskManagerTest {
-    FileBackedTaskManager fbtm;
-    File tempFile;
+public class FileBackedTaskManagerTest extends TaskManagerTest {
+    private File file;
+
+    public FileBackedTaskManagerTest() throws IOException {
+    }
 
     @BeforeEach
-    public void setUp() throws IOException {
-        tempFile = File.createTempFile("TaskManager", ".tmp");
-        fbtm = FileBackedTaskManager.loadFromFile(tempFile);
+    public void setUp() {
+        try{
+            file = File.createTempFile("TaskManager", ".tmp");
+            super.setUpTest(new FileBackedTaskManager(file));
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
     @Test
     public void ifEmpty() {
-        assertEquals(0, fbtm.getTasks().size(), "Tasks should be empty on init");
-        assertEquals(0, fbtm.getEpics().size(), "Epics should be empty on init");
-        assertEquals(0, fbtm.getSubtasks().size(), "Subtasks should be empty on init");
+        assertEquals(0, manager.getTasks().size(), "Tasks should be empty on init");
+        assertEquals(0, manager.getEpics().size(), "Epics should be empty on init");
+        assertEquals(0, manager.getSubtasks().size(), "Subtasks should be empty on init");
     }
 
     @Test
     public void shouldSaveAndLoadSingleTaskCorrectly() {
         Task task = new Task("t1", "d1", Status.NEW);
-        fbtm.createTask(task);
+        manager.createTask(task);
         task.setId(0);
 
-        List<Task> loadedTasks = fbtm.getTasks();
+        List<Task> loadedTasks = manager.getTasks();
         assertEquals(List.of(task), loadedTasks, "Loaded tasks do not match the saved one");
     }
 
     @Test
     public void shouldSaveAndLoadSingleEpicCorrectly() {
         Epic epic = new Epic("e1", "ee1", Status.NEW);
-        fbtm.createEpic(epic);
+        manager.createEpic(epic);
         epic.setId(0);
-        List<Epic> loadedEpics = fbtm.getEpics();
+        List<Epic> loadedEpics = manager.getEpics();
         assertEquals(List.of(epic), loadedEpics, "Loaded epics do not match the saved one");
     }
 
     @Test
     public void shouldSaveAndLoadSubtasksCorrectly() {
         Epic epic = new Epic("e1", "ee1", Status.NEW);
-        fbtm.createEpic(epic); // ID = 0
+        manager.createEpic(epic); // ID = 0
 
         Subtask s1 = new Subtask("s1", "d1", Status.NEW, 0);
         Subtask s2 = new Subtask("s2", "d2", Status.NEW, 0);
         s1.setId(1);
         s2.setId(2);
-        fbtm.createSubtask(s1); // ID = 1
-        fbtm.createSubtask(s2); // ID = 2
+        manager.createSubtask(s1); // ID = 1
+        manager.createSubtask(s2); // ID = 2
 
-        List<Subtask> loadedSubtasks = fbtm.getSubtasks();
+        List<Subtask> loadedSubtasks = manager.getSubtasks();
         assertEquals(List.of(s1, s2), loadedSubtasks, "Loaded subtasks do not match the saved ones");
     }
 
@@ -75,14 +81,15 @@ public class FileBackedTaskManagerTest {
         sub1.setId(2);
         sub2.setId(3);
 
-        fbtm.createTask(task);     // ID = 0
-        fbtm.createEpic(epic);     // ID = 1
-        fbtm.createSubtask(sub1);  // ID = 2
-        fbtm.createSubtask(sub2);  // ID = 3
+        manager.createTask(task);     // ID = 0
+        manager.createEpic(epic);     // ID = 1
+        manager.createSubtask(sub1);  // ID = 2
+        manager.createSubtask(sub2);  // ID = 3
 
 
         // load data from file
-        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFile);
+        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
+
 
         //Compare
         assertEquals(List.of(task), loadedManager.getTasks(), "Tasks do not match after reload");

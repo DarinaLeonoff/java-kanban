@@ -6,6 +6,7 @@ import model.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
@@ -18,7 +19,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public void save() throws ManagerSaveException {
         Stream.of(getTasks(), getEpics(), getSubtasks()).flatMap(tasks -> tasks.stream()).forEach(task -> {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8, true))) {
                 writer.write(CSVTaskConverter.taskToCSV(task));
                 writer.newLine();
             } catch (IOException e) {
@@ -33,6 +34,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             fbtm = new FileBackedTaskManager(file);
             reader.lines()
                     .map(CSVTaskConverter::fromString)
+                    .filter(Objects::nonNull)
                     .forEach(task -> {
                         fbtm.setMaxId(task.getId());
                         TaskType type = task.getType();
@@ -127,4 +129,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         id = Integer.max(id, taskId);
     }
 
+    public File getFileToSave(){
+        return file;
+    }
 }

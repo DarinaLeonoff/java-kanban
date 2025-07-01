@@ -20,13 +20,14 @@ public class CSVTaskConverter {
             epicId = ((Subtask) task).getEpicId();
         }
         LocalDateTime startTime = task.getStartTime().orElse(null);
-        return String.format("%d,%s,%s,%s,%s,%s,%s,%s,\n", task.getId(), type, task.getTitle(), task.getStatus(),
-                task.getDescription(), epicId, startTime != null ? startTime.format(DateTimeFormatter.ISO_DATE_TIME)
-                        : null,
-                task.getDuration().toMinutes());
+        return String.format("%d,%s,%s,%s,%s,%d,%s,%s,\n", task.getId(), type, task.getTitle(), task.getStatus(),
+                task.getDescription(), epicId, startTime != null ? startTime.format(DateTimeFormatter.ISO_DATE_TIME) : null, task.getDuration().toMinutes());
     }
 
     public static Task fromString(String taskStr) {
+        if(taskStr.isBlank()){
+            return null;
+        }
         String[] taskArray = taskStr.split(",");
 
         //id,type,name,status,description,epic,startTime,duration
@@ -36,15 +37,14 @@ public class CSVTaskConverter {
         Status status = Status.valueOf(taskArray[3]);
         String description = taskArray[4];
         int epicId = Integer.parseInt(taskArray[5]);
-        LocalDateTime startTime = taskArray[6].equals("null") ? null : LocalDateTime.parse(taskArray[6],
-                DateTimeFormatter.ISO_DATE_TIME);
+        LocalDateTime startTime = taskArray[6].equals("null") ? null : LocalDateTime.parse(taskArray[6], DateTimeFormatter.ISO_DATE_TIME);
         Duration duration = Duration.ofMinutes(Long.parseLong(taskArray[7]));
 
         switch (type) {
             case TASK:
                 Task task;
-                if (startTime == null){
-                task = new Task(title, description, status);
+                if (startTime == null) {
+                    task = new Task(title, description, status);
                 } else {
                     task = new Task(title, description, status, startTime, duration);
                 }
@@ -52,17 +52,17 @@ public class CSVTaskConverter {
                 return task;
             case EPIC:
                 Epic epic = new Epic(title, description, status);
-                if(startTime != null){
+                if (startTime != null) {
                     epic.setStartFinish(startTime, startTime.plus(duration));
                 }
                 epic.setId(taskId);
                 return epic;
             case SUBTASK:
                 Subtask subtask;
-                if(startTime == null){
+                if (startTime == null) {
                     subtask = new Subtask(title, description, status, epicId);
                 } else {
-                    subtask = new Subtask(title,description,status, epicId, startTime, duration);
+                    subtask = new Subtask(title, description, status, epicId, startTime, duration);
                 }
                 subtask.setId(taskId);
                 return subtask;

@@ -58,7 +58,8 @@ public class Task {
 
     @Override
     public String toString() {
-        return "\nmodel.Task{" + "title='" + title + '\'' + ", description='" + description + '\'' + ", id=" + id + ", status=" + status + ", " + getClass() + '}';
+        return String.format("\nmodel.Task{title=%s, description=%s, id=%d, status=%s, %s}\n", title, description, id,
+                status, this.getClass());
     }
 
     public String getTitle() {
