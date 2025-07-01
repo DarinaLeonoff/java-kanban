@@ -128,7 +128,7 @@ abstract class TaskManagerTest {
         System.out.println("manager.getEpicById(epic.getId()).getStatus() = " + manager.getEpicById(epic.getId()).getStatus());
 
         // должен стать IN_PROGRESS из-за смешанных статусов
-        Assertions.assertSame(Status.IN_PROGRESS, manager.getEpicById(epic.getId()).getStatus(), "Not expected " + "state");
+        Assertions.assertSame(Status.IN_PROGRESS, manager.getEpicById(epic.getId()).getStatus());
     }
 
     @Test
