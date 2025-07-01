@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InMemoryTaskManagerTest extends TaskManagerTest{
+public class InMemoryTaskManagerTest extends TaskManagerTest {
     @BeforeEach
     public void setUp() {
         super.setUpTest(new InMemoryTaskManager());
@@ -36,7 +36,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest{
     }
 
     @Test
-    public void epicStartFinishDateFromSubtasks(){
+    public void epicStartFinishDateFromSubtasks() {
         Epic epic = new Epic("t", "d", Status.NEW);
         manager.createEpic(epic);
         LocalDateTime nowTime = LocalDateTime.now();
@@ -53,22 +53,18 @@ public class InMemoryTaskManagerTest extends TaskManagerTest{
     }
 
     @Test
-    public void prioritizedTaskListCheck(){
+    public void prioritizedTaskListCheck() {
         LocalDateTime nowTime = LocalDateTime.now();
         List<Task> expectedList = new ArrayList<>();
         Epic epic = new Epic("Epic", "it's a big task.", Status.DONE);
         manager.createEpic(epic);
-        Subtask subtask1 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(), nowTime,
-                Duration.ofMinutes(20));
+        Subtask subtask1 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(), nowTime, Duration.ofMinutes(20));
         manager.createSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(),
-                subtask1.getEndTime().get(), Duration.ofMinutes(20));
+        Subtask subtask2 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(), subtask1.getEndTime().get(), Duration.ofMinutes(20));
         manager.createSubtask(subtask2);
-        Subtask subtask3 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(),
-                subtask2.getEndTime().get(), Duration.ofMinutes(20));
+        Subtask subtask3 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(), subtask2.getEndTime().get(), Duration.ofMinutes(20));
         manager.createSubtask(subtask3);
-        Task task = new Task("Task", "it's a usual task.", Status.NEW,  subtask3.getEndTime().get(),
-                Duration.ofMinutes(20));
+        Task task = new Task("Task", "it's a usual task.", Status.NEW, subtask3.getEndTime().get(), Duration.ofMinutes(20));
         manager.createTask(task);
         expectedList.add(subtask1);
         expectedList.add(subtask2);
@@ -82,22 +78,18 @@ public class InMemoryTaskManagerTest extends TaskManagerTest{
     }
 
     @Test
-    public void prioritizedTaskWithNoData(){
+    public void prioritizedTaskWithNoData() {
         LocalDateTime nowTime = LocalDateTime.now();
         List<Task> expectedList = new ArrayList<>();
         Epic epic = new Epic("Epic", "it's a big task.", Status.DONE);
         manager.createEpic(epic);
-        Subtask subtask1 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(), nowTime,
-                Duration.ofMinutes(20));
+        Subtask subtask1 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(), nowTime, Duration.ofMinutes(20));
         manager.createSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(),
-                subtask1.getEndTime().get(), Duration.ofMinutes(20));
+        Subtask subtask2 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(), subtask1.getEndTime().get(), Duration.ofMinutes(20));
         manager.createSubtask(subtask2);
-        Subtask subtask3 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(),
-                subtask2.getEndTime().get(), Duration.ofMinutes(20));
+        Subtask subtask3 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(), subtask2.getEndTime().get(), Duration.ofMinutes(20));
         manager.createSubtask(subtask3);
-        Task task = new Task("Task", "it's a usual task.", Status.NEW, null,
-                Duration.ofMinutes(20));
+        Task task = new Task("Task", "it's a usual task.", Status.NEW, null, Duration.ofMinutes(20));
         manager.createTask(task);
         expectedList.add(subtask1);
         expectedList.add(subtask2);
@@ -109,22 +101,18 @@ public class InMemoryTaskManagerTest extends TaskManagerTest{
     }
 
     @Test
-    public void prioritizedTaskCheckOnIntersections(){
+    public void prioritizedTaskCheckOnIntersections() {
         LocalDateTime nowTime = LocalDateTime.now();
         List<Task> expectedList = new ArrayList<>();
         Epic epic = new Epic("Epic", "it's a big task.", Status.DONE);
         manager.createEpic(epic);
-        Subtask subtask1 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(), nowTime,
-                Duration.ofMinutes(20));
+        Subtask subtask1 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(), nowTime, Duration.ofMinutes(20));
         manager.createSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(),
-                subtask1.getEndTime().get(), Duration.ofMinutes(20));
+        Subtask subtask2 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(), subtask1.getEndTime().get(), Duration.ofMinutes(20));
         manager.createSubtask(subtask2);
-        Subtask subtask3 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(),
-                subtask2.getEndTime().get(), Duration.ofMinutes(20));
+        Subtask subtask3 = new Subtask("Subtask", "it's a small task.", Status.IN_PROGRESS, epic.getId(), subtask2.getEndTime().get(), Duration.ofMinutes(20));
         manager.createSubtask(subtask3);
-        Task task = new Task("Task", "it's a usual task.", Status.NEW, subtask3.getEndTime().get().minusMinutes(10),
-                Duration.ofMinutes(20));
+        Task task = new Task("Task", "it's a usual task.", Status.NEW, subtask3.getEndTime().get().minusMinutes(10), Duration.ofMinutes(20));
         manager.createTask(task);
         expectedList.add(subtask1);
         expectedList.add(subtask2);

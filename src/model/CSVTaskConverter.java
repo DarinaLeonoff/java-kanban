@@ -20,12 +20,11 @@ public class CSVTaskConverter {
             epicId = ((Subtask) task).getEpicId();
         }
         LocalDateTime startTime = task.getStartTime().orElse(null);
-        return String.format("%d,%s,%s,%s,%s,%d,%s,%s,\n", task.getId(), type, task.getTitle(), task.getStatus(),
-                task.getDescription(), epicId, startTime != null ? startTime.format(DateTimeFormatter.ISO_DATE_TIME) : null, task.getDuration().toMinutes());
+        return String.format("%d,%s,%s,%s,%s,%d,%s,%s,\n", task.getId(), type, task.getTitle(), task.getStatus(), task.getDescription(), epicId, startTime != null ? startTime.format(DateTimeFormatter.ISO_DATE_TIME) : null, task.getDuration().toMinutes());
     }
 
     public static Task fromString(String taskStr) {
-        if(taskStr.isBlank()){
+        if (taskStr.isBlank()) {
             return null;
         }
         String[] taskArray = taskStr.split(",");

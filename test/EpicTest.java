@@ -17,7 +17,7 @@ public class EpicTest {
     }
 
     @Test
-    public void trueIfReturnSameDateTime(){
+    public void trueIfReturnSameDateTime() {
         Epic epic = new Epic("Tatle 2", "desc 2", Status.DONE);
         LocalDateTime nowTime = LocalDateTime.now();
         epic.setStartFinish(nowTime, nowTime.plusMinutes(30));

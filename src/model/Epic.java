@@ -27,7 +27,7 @@ public class Epic extends Task {
         this.subtasks = subtasks;
     }
 
-    public void setStartFinish(LocalDateTime start, LocalDateTime finish){
+    public void setStartFinish(LocalDateTime start, LocalDateTime finish) {
         super.startTime = Optional.ofNullable(start);
         endTime = Optional.ofNullable(finish);
         super.duration = start == null ? Duration.ZERO : Duration.between(start, finish);

@@ -58,8 +58,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("\nmodel.Task{title=%s, description=%s, id=%d, status=%s, %s}\n", title, description, id,
-                status, this.getClass());
+        return String.format("\nmodel.Task{title=%s, description=%s, id=%d, status=%s, %s}\n", title, description, id, status, this.getClass());
     }
 
     public String getTitle() {
@@ -82,8 +81,8 @@ public class Task {
         return status;
     }
 
-    public Optional<LocalDateTime> getEndTime(){
-        if(startTime.isPresent()) {
+    public Optional<LocalDateTime> getEndTime() {
+        if (startTime.isPresent()) {
             return Optional.of(startTime.get().plus(duration));
         } else {
             return Optional.empty();

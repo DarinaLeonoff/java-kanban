@@ -32,20 +32,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         FileBackedTaskManager fbtm;
         try (BufferedReader reader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
             fbtm = new FileBackedTaskManager(file);
-            reader.lines()
-                    .map(CSVTaskConverter::fromString)
-                    .filter(Objects::nonNull)
-                    .forEach(task -> {
-                        fbtm.setMaxId(task.getId());
-                        TaskType type = task.getType();
-                        if (type == TaskType.SUBTASK) {
-                            fbtm.subtasks.put(task.getId(), (Subtask) task);
-                        } else if (type == TaskType.EPIC) {
-                            fbtm.epics.put(task.getId(), (Epic) task);
-                        } else {
-                            fbtm.tasks.put(task.getId(), task);
-                        }
-                    });
+            reader.lines().map(CSVTaskConverter::fromString).filter(Objects::nonNull).forEach(task -> {
+                fbtm.setMaxId(task.getId());
+                TaskType type = task.getType();
+                if (type == TaskType.SUBTASK) {
+                    fbtm.subtasks.put(task.getId(), (Subtask) task);
+                } else if (type == TaskType.EPIC) {
+                    fbtm.epics.put(task.getId(), (Epic) task);
+                } else {
+                    fbtm.tasks.put(task.getId(), task);
+                }
+            });
             return fbtm;
         } catch (IOException e) {
             System.out.println("Ошибка при чтении файла");
@@ -129,7 +126,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         id = Integer.max(id, taskId);
     }
 
-    public File getFileToSave(){
+    public File getFileToSave() {
         return file;
     }
 }

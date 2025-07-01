@@ -19,10 +19,10 @@ public class FileBackedTaskManagerTest extends TaskManagerTest {
 
     @BeforeEach
     public void setUp() {
-        try{
+        try {
             file = File.createTempFile("TaskManager", ".tmp");
             super.setUpTest(new FileBackedTaskManager(file));
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }

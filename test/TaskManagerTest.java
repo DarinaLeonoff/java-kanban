@@ -12,10 +12,10 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-abstract class TaskManagerTest{
+abstract class TaskManagerTest {
 
     protected TaskManager manager;
-    
+
     public void setUpTest(TaskManager manager) {
         this.manager = manager;
     }
@@ -93,8 +93,7 @@ abstract class TaskManagerTest{
         Epic epic = new Epic("Epic", "Epic desc", Status.NEW);
         manager.createEpic(epic);
 
-        Subtask subtask = new Subtask("Sub", "desc", Status.NEW,
-                epic.getId(), LocalDateTime.now(), Duration.ofMinutes(45));
+        Subtask subtask = new Subtask("Sub", "desc", Status.NEW, epic.getId(), LocalDateTime.now(), Duration.ofMinutes(45));
         manager.createSubtask(subtask);
 
         List<Subtask> epicSubtasks = manager.getSubtasksFromEpic(epic.getId());
@@ -107,8 +106,7 @@ abstract class TaskManagerTest{
         Epic epic = new Epic("Epic", "Epic desc", Status.NEW);
         manager.createEpic(epic);
 
-        Subtask subtask = new Subtask("Sub", "desc", Status.NEW,
-                epic.getId(), LocalDateTime.now(), Duration.ofMinutes(45));
+        Subtask subtask = new Subtask("Sub", "desc", Status.NEW, epic.getId(), LocalDateTime.now(), Duration.ofMinutes(45));
         manager.createSubtask(subtask);
 
         manager.removeEpic(epic.getId());
@@ -122,10 +120,8 @@ abstract class TaskManagerTest{
         Epic epic = new Epic("Epic", "Epic desc", Status.NEW);
         manager.createEpic(epic);
 
-        Subtask s1 = new Subtask("Sub1", "desc", Status.NEW,
-                epic.getId(), LocalDateTime.now(), Duration.ofMinutes(30));
-        Subtask s2 = new Subtask("Sub2", "desc", Status.DONE,
-                epic.getId(), LocalDateTime.now(), Duration.ofMinutes(30));
+        Subtask s1 = new Subtask("Sub1", "desc", Status.NEW, epic.getId(), LocalDateTime.now(), Duration.ofMinutes(30));
+        Subtask s2 = new Subtask("Sub2", "desc", Status.DONE, epic.getId(), LocalDateTime.now(), Duration.ofMinutes(30));
 
         manager.createSubtask(s1);
         manager.createSubtask(s2);
@@ -136,8 +132,7 @@ abstract class TaskManagerTest{
 
     @Test
     public void shouldTrackHistory() {
-        Task task = new Task("Task", "Desc", Status.NEW,
-                LocalDateTime.now(), Duration.ofMinutes(20));
+        Task task = new Task("Task", "Desc", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(20));
         manager.createTask(task);
 
         manager.getTaskById(task.getId());

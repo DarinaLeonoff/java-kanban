@@ -49,8 +49,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         List<Task> tasks = new ArrayList<>();
         Node current = first;
         Stream.iterate(current, Objects::nonNull, node -> node.next) //создаёт поток узлов, начиная с current, пока не null
-                .map(node -> node.task)
-                .forEach(tasks::add);
+                .map(node -> node.task).forEach(tasks::add);
         return tasks;
     }
 
