@@ -121,7 +121,7 @@ abstract class TaskManagerTest {
         manager.createEpic(epic);
 
         Subtask s1 = new Subtask("Sub1", "desc", Status.NEW, epic.getId(), LocalDateTime.now(), Duration.ofMinutes(30));
-        Subtask s2 = new Subtask("Sub2", "desc", Status.DONE, epic.getId(), LocalDateTime.now(), Duration.ofMinutes(30));
+        Subtask s2 = new Subtask("Sub2", "desc", Status.DONE, epic.getId(), LocalDateTime.now().plusMinutes(40), Duration.ofMinutes(30));
 
         manager.createSubtask(s1);
         manager.createSubtask(s2);
