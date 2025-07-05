@@ -5,6 +5,7 @@ import model.Status;
 import model.Subtask;
 import model.Task;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -13,7 +14,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Epic> epics = new HashMap<>();
     protected final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     protected final HistoryManager historyManager = Managers.getDefaultHistory();
-    protected TreeSet<Task> prioritizedTasks = new TreeSet<>((Task t1, Task t2) -> t1.getStartTime().get().isAfter(t2.getStartTime().get()) ? 1 : -1);
+    protected TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(task -> task.getStartTime().orElse(LocalDateTime.MAX)));
 
     public List<Task> getPrioritizedTasks() {
         return new ArrayList<>(prioritizedTasks);
@@ -25,8 +26,24 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    public boolean isNoIntersections(Task task) {
-        return prioritizedTasks.stream().filter(t -> task.getStartTime().isPresent() && (task.getStartTime().get().isAfter(t.getStartTime().get()) && task.getStartTime().get().isBefore(t.getEndTime().get()) || (task.getEndTime().get().isAfter(t.getStartTime().get()) && task.getEndTime().get().isBefore(t.getEndTime().get())))).toList().isEmpty();
+    private boolean isNoIntersections(Task task) {
+        return prioritizedTasks.stream().noneMatch(t -> isIntersecting(task, t));
+    }
+
+    private boolean isIntersecting(Task t1, Task t2) {
+        if (t1.equals(t2)) {
+            return false;
+        }
+        if (t1.getStartTime().isEmpty() || t2.getStartTime().isEmpty()) {
+            return false;
+        }
+
+        LocalDateTime start1 = t1.getStartTime().get();
+        LocalDateTime end1 = t1.getEndTime().orElse(start1);
+        LocalDateTime start2 = t2.getStartTime().get();
+        LocalDateTime end2 = t2.getEndTime().orElse(start2);
+
+        return start1.isBefore(end2) && start2.isBefore(end1);
     }
 
     //Task methods
@@ -51,9 +68,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeTask(int taskId) {
-        historyManager.remove(taskId);
-        tasks.remove(taskId);
         prioritizedTasks.remove(tasks.get(taskId));
+        tasks.remove(taskId);
+        historyManager.remove(taskId);
     }
 
     @Override
@@ -81,9 +98,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void createEpic(Epic epic) {
         epic.setId(getNewID());
-        if (isNoIntersections(epic)) {
-            epics.put(epic.getId(), epic);
-        }
+        epics.put(epic.getId(), epic);
     }
 
     @Override
@@ -111,9 +126,7 @@ public class InMemoryTaskManager implements TaskManager {
         Epic curEpic = epics.get(epic.getId());
         epic.setSubtasks(curEpic.getSubtasks());
         epic.setStatus(curEpic.getStatus());
-        if (isNoIntersections(epic)) {
-            epics.put(epic.getId(), epic);
-        }
+        epics.put(epic.getId(), epic);
     }
 
     private void updateEpicState(Epic epic) {

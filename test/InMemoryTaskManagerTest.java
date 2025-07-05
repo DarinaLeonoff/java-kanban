@@ -122,4 +122,90 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
 
         Assertions.assertArrayEquals(expectedList.toArray(), prioritizedTasks.toArray(), "Not same array");
     }
+
+    @Test
+    public void shouldAddTaskBeforeOthersWithoutIntersection() {
+        LocalDateTime now = LocalDateTime.now();
+
+        Task task1 = new Task("T1", "Desc", Status.NEW, now.plusMinutes(30), Duration.ofMinutes(30));
+        Task earlyTask = new Task("Early", "Before all", Status.NEW, now, Duration.ofMinutes(10));
+
+        manager.createTask(task1);
+        manager.createTask(earlyTask);
+
+        List<Task> tasks = manager.getPrioritizedTasks();
+        Assertions.assertTrue(tasks.contains(earlyTask), "Early task should be in the list");
+    }
+
+    @Test
+    public void shouldAddTaskAfterOthersWithoutIntersection() {
+        LocalDateTime now = LocalDateTime.now();
+
+        Task task1 = new Task("T1", "Desc", Status.NEW, now, Duration.ofMinutes(20));
+        Task lateTask = new Task("Late", "After all", Status.NEW, now.plusMinutes(30), Duration.ofMinutes(15));
+
+        manager.createTask(task1);
+        manager.createTask(lateTask);
+
+        List<Task> tasks = manager.getPrioritizedTasks();
+        Assertions.assertTrue(tasks.contains(lateTask), "Late task should be in the list");
+    }
+
+    @Test
+    public void shouldNotAddTaskInsideExistingTask() {
+        LocalDateTime now = LocalDateTime.now();
+
+        Task outer = new Task("Outer", "Desc", Status.NEW, now, Duration.ofMinutes(30));
+        Task inner = new Task("Inner", "Desc", Status.NEW, now.plusMinutes(5), Duration.ofMinutes(10));
+
+        manager.createTask(outer);
+        manager.createTask(inner);
+
+        List<Task> tasks = manager.getPrioritizedTasks();
+        Assertions.assertFalse(tasks.contains(inner), "Inner task intersects and should be rejected");
+    }
+
+    @Test
+    public void shouldNotAddTaskWithSameStartTime() {
+        LocalDateTime now = LocalDateTime.now();
+
+        Task first = new Task("First", "Desc", Status.NEW, now, Duration.ofMinutes(20));
+        Task conflict = new Task("Conflict", "Same start", Status.NEW, now, Duration.ofMinutes(15));
+
+        manager.createTask(first);
+        manager.createTask(conflict);
+
+        List<Task> tasks = manager.getPrioritizedTasks();
+        Assertions.assertFalse(tasks.contains(conflict), "Task with same start time should not be added");
+    }
+
+    @Test
+    public void shouldNotAddTaskWithSameEndTime() {
+        LocalDateTime now = LocalDateTime.now();
+
+        Task first = new Task("First", "Desc", Status.NEW, now, Duration.ofMinutes(20));
+        Task conflict = new Task("Conflict", "Same end", Status.NEW, now.minusMinutes(10), Duration.ofMinutes(30));
+
+        manager.createTask(first);
+        manager.createTask(conflict);
+
+        List<Task> tasks = manager.getPrioritizedTasks();
+        Assertions.assertFalse(tasks.contains(conflict), "Task with overlapping end time should not be added");
+    }
+
+    @Test
+    public void shouldNotAddTaskThatCoversExistingTask() {
+        LocalDateTime now = LocalDateTime.now();
+
+        Task inner = new Task("Inner", "Desc", Status.NEW, now.plusMinutes(5), Duration.ofMinutes(10));
+        Task outer = new Task("Outer", "Desc", Status.NEW, now, Duration.ofMinutes(30));
+
+        manager.createTask(inner);
+        manager.createTask(outer);
+
+        List<Task> tasks = manager.getPrioritizedTasks();
+        System.out.println(tasks.size());
+        Assertions.assertFalse(tasks.contains(outer), "Outer task intersects and should be rejected");
+    }
+
 }

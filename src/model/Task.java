@@ -4,6 +4,7 @@ import manager.TaskType;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -14,6 +15,7 @@ public class Task {
     private Status status;
     protected Duration duration;
     protected Optional<LocalDateTime> startTime;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("DD/MM/YY HH:mm");
 
     public Task(String title, String description, Status status) {
         this.title = title;
@@ -58,7 +60,10 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("\nmodel.Task{title=%s, description=%s, id=%d, status=%s, %s}\n", title, description, id, status, this.getClass());
+        return String.format(
+                "\nmodel.Task{title=%s, description=%s, id=%d, status=%s, start=%s, duration=%d min, " + "end=%s %s}\n",
+                title, description, id, status, startTime.get().format(formatter), duration.toMinutes(),
+                getEndTime().get().format(formatter), this.getClass());
     }
 
     public String getTitle() {
