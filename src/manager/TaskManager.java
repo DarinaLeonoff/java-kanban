@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
+    List<Task> getPrioritizedTasks();
+
     //Task methods
     void createTask(Task task);
 

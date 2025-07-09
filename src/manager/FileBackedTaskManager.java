@@ -6,6 +6,9 @@ import model.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
+import java.util.Objects;
+import java.util.stream.Stream;
+
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private File file;
@@ -15,32 +18,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     public void save() throws ManagerSaveException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
-            for (Task task : getTasks()) {
+        Stream.of(getTasks(), getEpics(), getSubtasks()).flatMap(tasks -> tasks.stream()).forEach(task -> {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8, true))) {
                 writer.write(CSVTaskConverter.taskToCSV(task));
                 writer.newLine();
+            } catch (IOException e) {
+                throw new ManagerSaveException("Save exception");
             }
-            for (Epic epic : getEpics()) {
-                writer.write(CSVTaskConverter.taskToCSV(epic));
-                writer.newLine();
-            }
-            for (Subtask subtask : getSubtasks()) {
-                writer.write(CSVTaskConverter.taskToCSV(subtask));
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            throw new ManagerSaveException("Save exception");
-            //Исключения вида IOException нужно отлавливать внутри метода save и выкидывать собственное непроверяемое исключение ManagerSaveException.
-        }
+        });
     }
 
     public static FileBackedTaskManager loadFromFile(File file) { //восстановление данных из файла
-        FileBackedTaskManager fbtm = null;
+        FileBackedTaskManager fbtm;
         try (BufferedReader reader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
             fbtm = new FileBackedTaskManager(file);
-            String str = reader.readLine();
-            while (str != null) {
-                Task task = CSVTaskConverter.fromString(str);
+            reader.lines().map(CSVTaskConverter::fromString).filter(Objects::nonNull).forEach(task -> {
                 fbtm.setMaxId(task.getId());
                 TaskType type = task.getType();
                 if (type == TaskType.SUBTASK) {
@@ -50,13 +42,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 } else {
                     fbtm.tasks.put(task.getId(), task);
                 }
-                reader.readLine(); //read blank line
-                str = reader.readLine();
-            }
+            });
+            return fbtm;
         } catch (IOException e) {
             System.out.println("Ошибка при чтении файла");
         }
-        return fbtm;
+        return null;
     }
 
     @Override
@@ -135,4 +126,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         id = Integer.max(id, taskId);
     }
 
+    public File getFileToSave() {
+        return file;
+    }
 }
