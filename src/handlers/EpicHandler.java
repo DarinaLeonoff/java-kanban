@@ -2,6 +2,7 @@ package handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.sun.net.httpserver.HttpExchange;
 import manager.TaskManager;
 import model.Epic;
@@ -10,6 +11,7 @@ import model.Subtask;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class EpicHandler extends BaseHandler{
     private TaskManager manager;
@@ -20,13 +22,18 @@ public class EpicHandler extends BaseHandler{
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         super.handle(exchange);
-        Gson gson = new GsonBuilder().create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(java.time.Duration.class,
+                        (com.google.gson.JsonSerializer<java.time.Duration>)
+                                (src, typeOfSrc, context) -> new com.google.gson.JsonPrimitive(src.toMinutes()))
+                .registerTypeAdapter(Optional.class, new OptionalAdapter())
+                .create();
         String response = "";
         String[] pathArray = super.path.split("/");
         switch (super.method){
             case "GET":
                 if(pathArray.length == 2) {
-                    response = gson.toJson(manager.getEpics());
+                    response = gson.toJson(manager.getEpics(),new TypeToken<List<Epic>>() {}.getType());
                     sendText(exchange, 200, response);
                 } else if(pathArray.length == 3){
                     try {
@@ -53,7 +60,7 @@ public class EpicHandler extends BaseHandler{
                     if(pathArray.length == 2) {
                         Epic epic = gson.fromJson(body, Epic.class);
                         manager.createEpic(epic);
-                        response = "Subtask added";
+                        response = "Epic added";
                         sendText(exchange, 201, response);
                     }
                 } catch (Exception e){
