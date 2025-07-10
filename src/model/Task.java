@@ -15,7 +15,7 @@ public class Task {
     private Status status;
     protected Duration duration;
     protected Optional<LocalDateTime> startTime;
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("DD/MM/YY HH:mm");
+    private transient DateTimeFormatter formatter = DateTimeFormatter.ofPattern("DD/MM/YY HH:mm");
 
     public Task(String title, String description, Status status) {
         this.title = title;
