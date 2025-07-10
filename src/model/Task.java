@@ -91,10 +91,10 @@ public class Task {
     }
 
     public Duration getDuration() {
-        return duration;
+        return duration == null ? Duration.ZERO : duration;
     }
 
     public Optional<LocalDateTime> getStartTime() {
-        return startTime;
+        return startTime == null ? Optional.empty() : startTime;
     }
 }

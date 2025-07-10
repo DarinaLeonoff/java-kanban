@@ -37,11 +37,7 @@ public class TaskHandler extends BaseHandler {
         switch (super.method) {
             case "GET":
                 if (pathArray.length == 2) {
-                    try {
-                        response = gson.toJson(manager.getTasks(), new TypeToken<List<Task>>() {}.getType());
-                    } catch (Exception e){
-                        System.out.println(e.getMessage());
-                    }
+                    response = gson.toJson(manager.getTasks(), new TypeToken<List<Task>>() {}.getType());
                     System.out.println(response);
                     sendText(exchange, 200, response);
                 } else if (pathArray.length == 3) {
@@ -67,6 +63,7 @@ public class TaskHandler extends BaseHandler {
                     }
                 } catch (Exception e) {
                     sendHasInteractions(exchange);
+                    System.out.println(e.getMessage());
                 }
                 break;
             case "DELETE":
