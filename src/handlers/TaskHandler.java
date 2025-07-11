@@ -2,16 +2,13 @@ package handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializer;
 import com.google.gson.reflect.TypeToken;
 import com.sun.net.httpserver.HttpExchange;
 import manager.TaskManager;
-import model.Status;
 import model.Task;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,14 +25,12 @@ public class TaskHandler extends BaseHandler {
 
         String response = "";
         String[] pathArray = path.split("/");
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Duration.class, new DurationAdapter())
-                .registerTypeAdapter(Optional.class, new OptionalAdapter())
-                .create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Duration.class, new DurationAdapter()).registerTypeAdapter(Optional.class, new OptionalAdapter()).create();
         switch (super.method) {
             case "GET":
                 if (pathArray.length == 2) {
-                    response = gson.toJson(manager.getTasks(), new TypeToken<List<Task>>() {}.getType());
+                    response = gson.toJson(manager.getTasks(), new TypeToken<List<Task>>() {
+                    }.getType());
                     sendText(exchange, 200, response);
                 } else if (pathArray.length == 3) {
                     try {

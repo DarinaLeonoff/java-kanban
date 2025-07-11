@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 
 public class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
     private DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+
     @Override
     public void write(JsonWriter out, LocalDateTime value) throws IOException {
         if (value == null) {

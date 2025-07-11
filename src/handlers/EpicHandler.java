@@ -10,6 +10,7 @@ import model.Status;
 import model.Subtask;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,12 +23,7 @@ public class EpicHandler extends BaseHandler{
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         super.handle(exchange);
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(java.time.Duration.class,
-                        (com.google.gson.JsonSerializer<java.time.Duration>)
-                                (src, typeOfSrc, context) -> new com.google.gson.JsonPrimitive(src.toMinutes()))
-                .registerTypeAdapter(Optional.class, new OptionalAdapter())
-                .create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Duration.class, new DurationAdapter()).registerTypeAdapter(Optional.class, new OptionalAdapter()).create();
         String response = "";
         String[] pathArray = super.path.split("/");
         switch (super.method){
@@ -57,18 +53,16 @@ public class EpicHandler extends BaseHandler{
                 break;
             case "POST":
                 try {
-                    if(pathArray.length == 2) {
                         Epic epic = gson.fromJson(body, Epic.class);
                         manager.createEpic(epic);
                         response = "Epic added";
                         sendText(exchange, 201, response);
-                    }
                 } catch (Exception e){
                     sendHasInteractions(exchange);
                 }
                 break;
             case "DELETE":
-                manager.removeSubtask(Integer.parseInt(pathArray[2]));
+                manager.removeEpic(Integer.parseInt(pathArray[2]));
                 sendText(exchange, 200, "Delete completed");
                 break;
             default: exchange.sendResponseHeaders(exchange.getResponseCode(), 0);
