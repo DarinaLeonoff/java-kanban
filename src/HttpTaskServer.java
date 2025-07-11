@@ -25,8 +25,7 @@ public class HttpTaskServer {
 
         taskManager.createTask(new Task("Test Task", "", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(5)));
         taskManager.createEpic(new Epic("Test Epic", "", Status.NEW));
-        taskManager.createSubtask(new Subtask("Test Subtask", "", Status.NEW, 1, LocalDateTime.now().plusMinutes(6),
-                Duration.ofMinutes(5)));
+        taskManager.createSubtask(new Subtask("Test Subtask", "", Status.NEW, 1, LocalDateTime.now().plusMinutes(6), Duration.ofMinutes(5)));
 
         httpServer.createContext("/tasks", new TaskHandler(taskManager));
         httpServer.createContext("/subtasks", new SubtaskHandler(taskManager));

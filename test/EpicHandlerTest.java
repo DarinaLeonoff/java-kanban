@@ -48,11 +48,10 @@ public class EpicHandlerTest {
     void shouldCreateAndReturnEpicList() throws Exception {
         baseUri = URI.create("http://localhost:8080/epics");
         // 1) GET /epics/id/subtasks
-        HttpRequest get =
-                HttpRequest.newBuilder(URI.create("http://localhost:8080/epics/1/subtasks")).header("Content-Type",
-                        "application/json").GET().build();
+        HttpRequest get = HttpRequest.newBuilder(URI.create("http://localhost:8080/epics/1/subtasks")).header("Content-Type", "application/json").GET().build();
         HttpResponse<String> getResp = client.send(get, HttpResponse.BodyHandlers.ofString());
-        List<Subtask> subtasks = gson.fromJson(getResp.body(), new TypeToken<List<Subtask>>(){}.getType());
+        List<Subtask> subtasks = gson.fromJson(getResp.body(), new TypeToken<List<Subtask>>() {
+        }.getType());
         List<Integer> subId = subtasks.stream().map(Subtask::getId).toList();
 
         // 2) POST /epics  → 201
@@ -63,8 +62,7 @@ public class EpicHandlerTest {
                   "status": "NEW"
                 }
                 """;
-        HttpRequest post =
-                HttpRequest.newBuilder(baseUri).header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(jsonEpic)).build();
+        HttpRequest post = HttpRequest.newBuilder(baseUri).header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(jsonEpic)).build();
         HttpResponse<String> postResp = client.send(post, HttpResponse.BodyHandlers.ofString());
         assertEquals(201, postResp.statusCode(), "Создание задачи должно вернуть 201");
 

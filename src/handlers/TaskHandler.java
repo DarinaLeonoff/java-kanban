@@ -23,7 +23,6 @@ public class TaskHandler extends BaseHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         super.handle(exchange);
-
         String response = "";
         String[] pathArray = path.split("/");
         Gson gson = new GsonBuilder()

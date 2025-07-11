@@ -25,11 +25,7 @@ public class PrioritizedHandlerTest {
     private static HttpServer server;
     private URI baseUri;
     private final HttpClient client = HttpClient.newHttpClient();
-    private final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Optional.class, new OptionalAdapter())
-            .registerTypeAdapter(Duration.class, new DurationAdapter())
-            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-            .create();
+    private final Gson gson = new GsonBuilder().registerTypeAdapter(Optional.class, new OptionalAdapter()).registerTypeAdapter(Duration.class, new DurationAdapter()).registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
 
     @BeforeAll
     static void initServer() {
@@ -46,12 +42,10 @@ public class PrioritizedHandlerTest {
         baseUri = URI.create("http://localhost:8080/prioritized");
         int[] id = new int[]{0, 2};
         HttpRequest getTask = HttpRequest.newBuilder(baseUri).header("Content-Type", "application/json").GET().build();
-        HttpResponse<String>getResp = client.send(getTask, HttpResponse.BodyHandlers.ofString());
-        List<? extends Task> prioritized = gson.fromJson(getResp.body(),
-                new TypeToken<List<? extends Task>>(){}.getType());
-        int[] curId = prioritized.stream()
-                .mapToInt(Task::getId)
-                .toArray();
+        HttpResponse<String> getResp = client.send(getTask, HttpResponse.BodyHandlers.ofString());
+        List<? extends Task> prioritized = gson.fromJson(getResp.body(), new TypeToken<List<? extends Task>>() {
+        }.getType());
+        int[] curId = prioritized.stream().mapToInt(Task::getId).toArray();
 
         assertArrayEquals(curId, id);
     }

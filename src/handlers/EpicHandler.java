@@ -15,8 +15,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public class EpicHandler extends BaseHandler{
+public class EpicHandler extends BaseHandler {
     private TaskManager manager;
+
     public EpicHandler(TaskManager manager) {
         this.manager = manager;
     }
@@ -31,26 +32,26 @@ public class EpicHandler extends BaseHandler{
                 .create();
         String response = "";
         String[] pathArray = super.path.split("/");
-        switch (super.method){
+        switch (super.method) {
             case "GET":
-                if(pathArray.length == 2) {
-                    response = gson.toJson(manager.getEpics(),new TypeToken<List<Epic>>() {}.getType());
+                if (pathArray.length == 2) {
+                    response = gson.toJson(manager.getEpics(), new TypeToken<List<Epic>>() {
+                    }.getType());
                     sendText(exchange, 200, response);
-                } else if(pathArray.length == 3){
+                } else if (pathArray.length == 3) {
                     try {
                         response = gson.toJson(manager.getEpicById(Integer.parseInt(pathArray[2])));
                         sendText(exchange, 200, response);
-                    } catch (NumberFormatException e){
+                    } catch (NumberFormatException e) {
                         sendNotFound(exchange);
                     }
-                } else if(pathArray.length == 4){
+                } else if (pathArray.length == 4) {
                     try {
                         Epic epic = manager.getEpicById(Integer.parseInt(pathArray[2]));
-                    List<Subtask> subtasks =
-                            manager.getSubtasks().stream().filter(s -> epic.getSubtasks().contains(s.getId())).toList();
-                    response = gson.toJson(subtasks);
+                        List<Subtask> subtasks = manager.getSubtasks().stream().filter(s -> epic.getSubtasks().contains(s.getId())).toList();
+                        response = gson.toJson(subtasks);
                         sendText(exchange, 200, response);
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         sendNotFound(exchange);
                     }
                 }
@@ -58,11 +59,11 @@ public class EpicHandler extends BaseHandler{
                 break;
             case "POST":
                 try {
-                        Epic epic = gson.fromJson(body, Epic.class);
-                        manager.createEpic(epic);
-                        response = "Epic added";
-                        sendText(exchange, 201, response);
-                } catch (Exception e){
+                    Epic epic = gson.fromJson(body, Epic.class);
+                    manager.createEpic(epic);
+                    response = "Epic added";
+                    sendText(exchange, 201, response);
+                } catch (Exception e) {
                     sendHasInteractions(exchange);
                 }
                 break;
@@ -70,7 +71,8 @@ public class EpicHandler extends BaseHandler{
                 manager.removeEpic(Integer.parseInt(pathArray[2]));
                 sendText(exchange, 200, "Delete completed");
                 break;
-            default: exchange.sendResponseHeaders(exchange.getResponseCode(), 0);
+            default:
+                exchange.sendResponseHeaders(exchange.getResponseCode(), 0);
         }
     }
 }

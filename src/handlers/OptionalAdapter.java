@@ -10,8 +10,7 @@ import java.util.Optional;
 public class OptionalAdapter<T> implements JsonSerializer<Optional<T>>, JsonDeserializer<Optional<T>> {
 
     @Override
-    public Optional<T> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
+    public Optional<T> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
         if (!(typeOfT instanceof ParameterizedType parameterizedType)) {
             throw new JsonParseException("Expected Optional with generic type");

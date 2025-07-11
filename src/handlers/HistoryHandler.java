@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public class HistoryHandler extends BaseHandler{
+public class HistoryHandler extends BaseHandler {
     private TaskManager manager;
 
     public HistoryHandler(TaskManager manager) {
@@ -30,7 +30,7 @@ public class HistoryHandler extends BaseHandler{
                 .registerTypeAdapter(Duration.class, new DurationAdapter())
                 .registerTypeAdapter(Optional.class, new OptionalAdapter())
                 .create();
-        String response ="";
+        String response = "";
         if (method.equals("GET")) {
             response = gson.toJson(manager.getHistory(), new TypeToken<List<? extends Task>>() {
             }.getType());

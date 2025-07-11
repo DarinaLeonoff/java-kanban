@@ -1,16 +1,12 @@
 package handlers;
 
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import manager.TaskManager;
-import model.Subtask;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 public class BaseHandler implements HttpHandler {
     protected String method;
@@ -45,6 +41,7 @@ public class BaseHandler implements HttpHandler {
             os.write(resp);
         }
     }
+
     public void sendHasInteractions(HttpExchange exchange) throws IOException {
         byte[] resp = "Has Interactions".getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().set("Content-Type", "text/plain; charset=utf-8");
