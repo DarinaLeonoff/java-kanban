@@ -26,7 +26,7 @@ public class TaskHandler extends BaseHandler {
         String response = "";
         String[] pathArray = path.split("/");
         Gson gson = new GsonBuilder().registerTypeAdapter(Duration.class, new DurationAdapter()).registerTypeAdapter(Optional.class, new OptionalAdapter()).create();
-        switch (super.method) {
+        switch (method) {
             case "GET":
                 if (pathArray.length == 2) {
                     response = gson.toJson(manager.getTasks(), new TypeToken<List<Task>>() {
@@ -44,7 +44,7 @@ public class TaskHandler extends BaseHandler {
             case "POST":
                 try {
                     Task task = gson.fromJson(body, Task.class);
-                    if (pathArray.length == 2 && task.getId() == 0) {
+                    if (pathArray.length == 2) {
                         manager.createTask(task);
                         response = "Task added";
                         sendText(exchange, 201, response);
@@ -55,7 +55,6 @@ public class TaskHandler extends BaseHandler {
                     }
                 } catch (Exception e) {
                     sendHasInteractions(exchange);
-                    System.out.println(e.getMessage());
                 }
                 break;
             case "DELETE":
