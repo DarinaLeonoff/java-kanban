@@ -17,7 +17,6 @@ public class HttpTaskServer {
     private static final int PORT = 8080;
     private static HttpServer httpServer;
     private static final TaskManager taskManager = Managers.getDefault();
-    private static final HistoryManager historyManager = Managers.getDefaultHistory();
 
 
     public static void main(String[] args) throws IOException {
@@ -47,14 +46,3 @@ public class HttpTaskServer {
     }
 
 }
-
-//todo Чтобы не дублировать код, можно использовать общий для всех HTTP-обработчиков класс. Для этого создайте
-// класс BaseHttpHandler — он будет содержать общие методы для чтения и отправки данных:
-//sendText — для отправки общего ответа в случае успеха;
-//sendNotFound — для отправки ответа в случае, если объект не был найден;
-//sendHasInteractions — для отправки ответа, если при создании или обновлении задача пересекается с уже существующими.
-//В этом случае подклассы-обработчики TaskHandler или UserHandler будут наследоваться от BaseHttpHandler, чтобы использовать общие методы. Такой подход уменьшает количество повторяющегося кода и позволяет проще вносить в него изменения.
-//Код можно сделать ещё лаконичнее, пробрасывая NotFoundException в TaskManager. Тогда в обработчиках не нужно проверять экземпляр Task на null — можно обрабатывать сразу исключение. Реализуйте такой подход. Также добавьте try — catch — он будет обрабатывать все исключения, которые возникают во время работы программы.
-
-
-

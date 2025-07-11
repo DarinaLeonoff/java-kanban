@@ -5,10 +5,7 @@ import com.sun.net.httpserver.HttpServer;
 import handlers.DurationAdapter;
 import handlers.LocalDateTimeAdapter;
 import handlers.OptionalAdapter;
-import model.Epic;
-import model.Subtask;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import model.Task;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
@@ -20,46 +17,30 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class EpicHandlerTest {
+public class TaskHandlerDelTest {
 
-    private static HttpServer server;
+    private static HttpServer server = HttpTaskServer.startServer();
     private URI baseUri;
     private final HttpClient client = HttpClient.newHttpClient();
     private final Gson gson = new GsonBuilder().registerTypeAdapter(Optional.class, new OptionalAdapter()).registerTypeAdapter(Duration.class, new DurationAdapter()).registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
 
-    @BeforeAll
-    static void initServer() {
-        server = HttpTaskServer.startServer();
-    }
-
-    @AfterAll
-    static void closeServer() {
-        server.stop(0);
-    }
-
     @Test
     void shouldDeleteTaskById() throws Exception {
-        baseUri = URI.create("http://localhost:8080/epics/" + 1);
+        baseUri = URI.create("http://localhost:8080/tasks/" + 0);
 
         // DELETE /tasks/0
         HttpRequest del = HttpRequest.newBuilder(baseUri).DELETE().build();
         HttpResponse<Void> resp = client.send(del, HttpResponse.BodyHandlers.discarding());
         assertEquals(200, resp.statusCode());
 
-        HttpRequest get = HttpRequest.newBuilder(URI.create("http://localhost:8080/epics"))   // GET /epics
+        HttpRequest get = HttpRequest.newBuilder(URI.create("http://localhost:8080/tasks/"))   // GET /tasks
                 .header("Content-Type", "application/json").GET().build();
         HttpResponse<String> getResp = client.send(get, HttpResponse.BodyHandlers.ofString());
-        List<Epic> epics = gson.fromJson(getResp.body(), new TypeToken<List<Epic>>() {
+        List<Task> tasks = gson.fromJson(getResp.body(), new TypeToken<List<Task>>() {
         }.getType());
-        assertTrue(epics.isEmpty());
-
-        HttpRequest getSubtask = HttpRequest.newBuilder(URI.create("http://localhost:8080/subtasks"))   // GET /epics
-                .header("Content-Type", "application/json").GET().build();
-        HttpResponse<String> getRespSub = client.send(getSubtask, HttpResponse.BodyHandlers.ofString());
-        List<Subtask> subtasks = gson.fromJson(getResp.body(), new TypeToken<List<Subtask>>() {
-        }.getType());
-        assertTrue(subtasks.isEmpty());
+        assertTrue(tasks.isEmpty());
     }
 }

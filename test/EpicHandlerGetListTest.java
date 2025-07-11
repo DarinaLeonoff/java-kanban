@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpServer;
 import handlers.DurationAdapter;
 import handlers.LocalDateTimeAdapter;
 import handlers.OptionalAdapter;
+import model.Epic;
 import model.Subtask;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,10 +20,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SubtaskHandlerTest {
-
+public class EpicHandlerGetListTest {
 
     private static HttpServer server;
     private URI baseUri;
@@ -38,32 +39,36 @@ public class SubtaskHandlerTest {
     static void closeServer() {
         server.stop(0);
     }
-
     @Test
-    void shouldCreateAndReturnTaskList() throws Exception {
-        baseUri = URI.create("http://localhost:8080/subtasks");
-        // 1) POST /tasks  → 201
-        String jsonTask = """
+    void shouldCreateAndReturnEpicList() throws Exception {
+        baseUri = URI.create("http://localhost:8080/epics");
+        // 1) GET /epics/id/subtasks
+        HttpRequest get = HttpRequest.newBuilder(URI.create("http://localhost:8080/epics/1/subtasks")).header("Content-Type", "application/json").GET().build();
+        HttpResponse<String> getResp = client.send(get, HttpResponse.BodyHandlers.ofString());
+        List<Subtask> subtasks = gson.fromJson(getResp.body(), new TypeToken<List<Subtask>>() {
+        }.getType());
+        List<Integer> subId = subtasks.stream().map(Subtask::getId).toList();
+
+        // 2) POST /epics  → 201
+        String jsonEpic = """
                 {
-                  "title": "JUnit subtask",
+                  "title": "JUnit epic",
                   "description": "created from test",
-                  "status": "NEW",
-                  "epicId": 1
+                  "status": "NEW"
                 }
                 """;
-        HttpRequest post = HttpRequest.newBuilder(baseUri).header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(jsonTask)).build();
+        HttpRequest post = HttpRequest.newBuilder(baseUri).header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(jsonEpic)).build();
         HttpResponse<String> postResp = client.send(post, HttpResponse.BodyHandlers.ofString());
         assertEquals(201, postResp.statusCode(), "Создание задачи должно вернуть 201");
 
-        // 2) GET /tasks  → список из одной задачи
+        // 3) GET /tasks  → список из 2 задач
         HttpResponse<String> listResp = client.send(HttpRequest.newBuilder(baseUri).GET().build(), HttpResponse.BodyHandlers.ofString());
 
         assertEquals(200, listResp.statusCode());
-        List<Subtask> subtasks = gson.fromJson(listResp.body(), new TypeToken<List<Subtask>>() {
+        List<Epic> epics = gson.fromJson(listResp.body(), new TypeToken<List<Epic>>() {
         }.getType());
-        assertEquals(2, subtasks.size(), "После создания должна быть одна задача");
-        assertEquals("JUnit subtask", subtasks.get(1).getTitle());
+        assertEquals(2, epics.size(), "После создания должна быть 2 задачи");
+        assertEquals("JUnit epic", epics.get(1).getTitle());
+        assertArrayEquals(epics.get(0).getSubtasks().toArray(), subId.toArray());
     }
-
-
 }
