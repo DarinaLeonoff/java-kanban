@@ -1,3 +1,4 @@
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpServer;
 import handlers.*;
 import manager.Managers;
@@ -15,11 +16,15 @@ import java.time.LocalDateTime;
 public class HttpTaskServer {
     private static final int PORT = 8080;
     private static HttpServer httpServer;
-    private static final TaskManager taskManager = Managers.getDefault();
+    private static TaskManager taskManager;
 
+    public HttpTaskServer(TaskManager manager) {
+        taskManager = manager;
+    }
 
     public static void main(String[] args) throws IOException {
-        httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
+        taskManager = Managers.getDefault();
+        httpServer = new HttpTaskServer(taskManager).start();
 
         taskManager.createTask(new Task("Test Task", "", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(5)));
         taskManager.createEpic(new Epic("Test Epic", "", Status.NEW));
@@ -34,14 +39,16 @@ public class HttpTaskServer {
         System.out.println("HTTP-сервер запущен на порту " + PORT);
     }
 
-    public static HttpServer startServer() {
+    public HttpServer start() {
         try {
-            HttpTaskServer.main(null);
-
-        } catch (IOException e) {
+            return HttpServer.create(new InetSocketAddress(PORT), 0);
+        }catch (IOException e){
             System.out.println(e.getMessage());
+            return null;
         }
-        return httpServer;
     }
 
+    public void stop(){
+        this.stop();
+    }
 }
