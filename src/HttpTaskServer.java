@@ -1,4 +1,3 @@
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpServer;
 import handlers.*;
 import manager.Managers;
@@ -42,13 +41,13 @@ public class HttpTaskServer {
     public HttpServer start() {
         try {
             return HttpServer.create(new InetSocketAddress(PORT), 0);
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println(e.getMessage());
             return null;
         }
     }
 
-    public void stop(){
+    public void stop() {
         this.stop();
     }
 }
