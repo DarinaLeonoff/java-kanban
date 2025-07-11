@@ -6,9 +6,7 @@ import handlers.DurationAdapter;
 import handlers.LocalDateTimeAdapter;
 import handlers.OptionalAdapter;
 import model.Epic;
-import model.Status;
 import model.Subtask;
-import model.Task;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -19,11 +17,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
