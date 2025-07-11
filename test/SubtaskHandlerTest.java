@@ -7,7 +7,6 @@ import handlers.LocalDateTimeAdapter;
 import handlers.OptionalAdapter;
 import model.Status;
 import model.Subtask;
-import model.Task;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SubtaskHandlerAdapter {
+public class SubtaskHandlerTest {
 
 
     private static HttpServer server;

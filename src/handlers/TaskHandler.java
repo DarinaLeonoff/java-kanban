@@ -9,6 +9,7 @@ import model.Task;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,11 @@ public class TaskHandler extends BaseHandler {
 
         String response = "";
         String[] pathArray = path.split("/");
-        Gson gson = new GsonBuilder().registerTypeAdapter(Duration.class, new DurationAdapter()).registerTypeAdapter(Optional.class, new OptionalAdapter()).create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .registerTypeAdapter(Optional.class, new OptionalAdapter())
+                .create();
         switch (method) {
             case "GET":
                 if (pathArray.length == 2) {

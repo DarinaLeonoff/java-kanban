@@ -10,6 +10,8 @@ import model.Task;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class HttpTaskServer {
     private static final int PORT = 8080;
@@ -21,9 +23,10 @@ public class HttpTaskServer {
     public static void main(String[] args) throws IOException {
         httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
 
-        taskManager.createTask(new Task("Test Task", "", Status.NEW));
+        taskManager.createTask(new Task("Test Task", "", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(5)));
         taskManager.createEpic(new Epic("Test Epic", "", Status.NEW));
-        taskManager.createSubtask(new Subtask("Test Subtask", "", Status.NEW, 1));
+        taskManager.createSubtask(new Subtask("Test Subtask", "", Status.NEW, 1, LocalDateTime.now().plusMinutes(6),
+                Duration.ofMinutes(5)));
 
         httpServer.createContext("/tasks", new TaskHandler(taskManager));
         httpServer.createContext("/subtasks", new SubtaskHandler(taskManager));

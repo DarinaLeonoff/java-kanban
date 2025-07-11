@@ -9,6 +9,8 @@ import model.Subtask;
 import model.Task;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,9 +24,8 @@ public class PrioritizedHandler extends BaseHandler{
     public void handle(HttpExchange exchange) throws IOException {
         super.handle(exchange);
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(java.time.Duration.class,
-                        (com.google.gson.JsonSerializer<java.time.Duration>)
-                                (src, typeOfSrc, context) -> new com.google.gson.JsonPrimitive(src.toMinutes()))
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
                 .registerTypeAdapter(Optional.class, new OptionalAdapter())
                 .create();
         String response ="";
