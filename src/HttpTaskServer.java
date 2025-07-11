@@ -14,8 +14,6 @@ import java.net.InetSocketAddress;
 public class HttpTaskServer {
     private static final int PORT = 8080;
     private static HttpServer httpServer;
-
-    ;
     private static final TaskManager taskManager = Managers.getDefault();
     private static final HistoryManager historyManager = Managers.getDefaultHistory();
 
@@ -23,10 +21,9 @@ public class HttpTaskServer {
     public static void main(String[] args) throws IOException {
         httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
 
-
-        taskManager.createTask(new Task("1", "11111", Status.NEW));
-//        taskManager.createEpic(new Epic("2", "2222", Status.NEW));
-//        taskManager.createSubtask(new Subtask("2/1", "22222.11111", Status.NEW, 1));
+        taskManager.createTask(new Task("Test Task", "", Status.NEW));
+        taskManager.createEpic(new Epic("Test Epic", "", Status.NEW));
+        taskManager.createSubtask(new Subtask("Test Subtask", "", Status.NEW, 1));
 
         httpServer.createContext("/tasks", new TaskHandler(taskManager));
         httpServer.createContext("/subtasks", new SubtaskHandler(taskManager));
@@ -35,6 +32,15 @@ public class HttpTaskServer {
         httpServer.createContext("/prioritized", new PrioritizedHandler(taskManager));
         httpServer.start();
         System.out.println("HTTP-сервер запущен на порту " + PORT);
+    }
+    public static HttpServer startServer(){
+        try {
+            HttpTaskServer.main(null);
+
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+        return httpServer;
     }
 
 }

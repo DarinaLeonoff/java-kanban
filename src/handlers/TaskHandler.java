@@ -29,16 +29,13 @@ public class TaskHandler extends BaseHandler {
         String response = "";
         String[] pathArray = path.split("/");
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(java.time.Duration.class,
-                        (com.google.gson.JsonSerializer<java.time.Duration>)
-                                (src, typeOfSrc, context) -> new com.google.gson.JsonPrimitive(src.toMinutes()))
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
                 .registerTypeAdapter(Optional.class, new OptionalAdapter())
                 .create();
         switch (super.method) {
             case "GET":
                 if (pathArray.length == 2) {
                     response = gson.toJson(manager.getTasks(), new TypeToken<List<Task>>() {}.getType());
-                    System.out.println(response);
                     sendText(exchange, 200, response);
                 } else if (pathArray.length == 3) {
                     try {
@@ -52,7 +49,7 @@ public class TaskHandler extends BaseHandler {
             case "POST":
                 try {
                     Task task = gson.fromJson(body, Task.class);
-                    if (pathArray.length == 2) {
+                    if (pathArray.length == 2 && task.getId() == 0) {
                         manager.createTask(task);
                         response = "Task added";
                         sendText(exchange, 201, response);

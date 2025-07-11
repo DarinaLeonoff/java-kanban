@@ -16,12 +16,10 @@ public class BaseHandler implements HttpHandler {
     protected String method;
     protected String path;
     protected String body;
-    private HttpExchange exchange;
 
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        this.exchange = exchange;
         this.method = exchange.getRequestMethod();
         this.path = exchange.getRequestURI().getPath();
         try (InputStream is = exchange.getRequestBody()) {
