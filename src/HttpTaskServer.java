@@ -23,11 +23,7 @@ public class HttpTaskServer {
     public HttpTaskServer(TaskManager manager) throws IOException {
         taskManager = manager;
         httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
-        gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .registerTypeAdapter(Duration.class, new DurationAdapter())
-                .registerTypeAdapter(Optional.class, new OptionalAdapter())
-                .create();
+        gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).registerTypeAdapter(Duration.class, new DurationAdapter()).registerTypeAdapter(Optional.class, new OptionalAdapter()).create();
     }
 
     public static void main(String[] args) throws IOException {
@@ -51,11 +47,11 @@ public class HttpTaskServer {
         return httpServer;
     }
 
-    public Gson getGson(){
+    public Gson getGson() {
         return gson;
     }
 
-    public TaskManager getTaskManager(){
+    public TaskManager getTaskManager() {
         return taskManager;
     }
 
