@@ -59,11 +59,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format(
-                "\nmodel.Task{title=%s, description=%s, id=%d, status=%s, start=%s, duration=%d min, " + "end=%s %s}\n",
-                title, description, id, status, startTime.<Object>map(localDateTime -> localDateTime.format(formatter)).orElse(null),
-                duration.toMinutes(),
-                getEndTime().<Object>map(localDateTime -> localDateTime.format(formatter)).orElse(null), this.getClass());
+        return String.format("\nmodel.Task{title=%s, description=%s, id=%d, status=%s, start=%s, duration=%d min, " + "end=%s %s}\n", title, description, id, status, startTime.<Object>map(localDateTime -> localDateTime.format(formatter)).orElse(null), duration.toMinutes(), getEndTime().<Object>map(localDateTime -> localDateTime.format(formatter)).orElse(null), this.getClass());
     }
 
     public String getTitle() {
@@ -95,6 +91,6 @@ public class Task {
     }
 
     public Optional<LocalDateTime> getStartTime() {
-        return startTime == null? Optional.empty() : startTime;
+        return startTime == null ? Optional.empty() : startTime;
     }
 }
