@@ -1,5 +1,8 @@
 package handlers;
 
+import adapters.DurationAdapter;
+import adapters.LocalDateTimeAdapter;
+import adapters.OptionalAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;

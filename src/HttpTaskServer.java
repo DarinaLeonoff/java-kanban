@@ -1,53 +1,40 @@
 import com.sun.net.httpserver.HttpServer;
-import handlers.*;
+
 import manager.Managers;
 import manager.TaskManager;
-import model.Epic;
-import model.Status;
-import model.Subtask;
-import model.Task;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.time.Duration;
-import java.time.LocalDateTime;
 
 public class HttpTaskServer {
-    private static final int PORT = 8080;
-    private static HttpServer httpServer;
-    private static TaskManager taskManager;
+    private final int PORT = 8080;
+    private HttpServer httpServer;
+    private TaskManager taskManager;
 
-    public HttpTaskServer(TaskManager manager) {
+    public HttpTaskServer(TaskManager manager) throws IOException {
         taskManager = manager;
+        httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
     }
 
     public static void main(String[] args) throws IOException {
-        taskManager = Managers.getDefault();
-        httpServer = new HttpTaskServer(taskManager).start();
+        TaskManager manager = Managers.getDefault();
 
-        taskManager.createTask(new Task("Test Task", "", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(5)));
-        taskManager.createEpic(new Epic("Test Epic", "", Status.NEW));
-        taskManager.createSubtask(new Subtask("Test Subtask", "", Status.NEW, 1, LocalDateTime.now().plusMinutes(6), Duration.ofMinutes(5)));
-
-        httpServer.createContext("/tasks", new TaskHandler(taskManager));
-        httpServer.createContext("/subtasks", new SubtaskHandler(taskManager));
-        httpServer.createContext("/epics", new EpicHandler(taskManager));
-        httpServer.createContext("/history", new HistoryHandler(taskManager));
-        httpServer.createContext("/prioritized", new PrioritizedHandler(taskManager));
+        HttpTaskServer httpServer = new HttpTaskServer(manager);
+        HttpContextConfigurator.configure(httpServer.getServer(), manager);
         httpServer.start();
-        System.out.println("HTTP-сервер запущен на порту " + PORT);
     }
 
-    public HttpServer start() {
-        try {
-            return HttpServer.create(new InetSocketAddress(PORT), 0);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            return null;
-        }
+    public void start() {
+        httpServer.start();
+        System.out.println("HTTP-сервер запущен на порту " + PORT);
     }
 
     public void stop() {
         this.stop();
     }
+
+    public HttpServer getServer() {
+        return httpServer;
+    }
+
 }

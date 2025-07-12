@@ -1,4 +1,4 @@
-package handlers;
+package adapters;
 
 import com.google.gson.*;
 
