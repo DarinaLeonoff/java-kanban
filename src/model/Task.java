@@ -13,16 +13,15 @@ public class Task {
     private String title;
     private String description;
     private Status status;
-    protected Duration duration;
-    protected Optional<LocalDateTime> startTime;
+    protected Duration duration = Duration.ZERO;
+    protected Optional<LocalDateTime> startTime = Optional.empty();
+    //без transient появляется ошибка при вызове gson.fromJson()
     private transient DateTimeFormatter formatter = DateTimeFormatter.ofPattern("DD/MM/YY HH:mm");
 
     public Task(String title, String description, Status status) {
         this.title = title;
         this.description = description;
         this.status = status;
-        duration = Duration.ZERO;
-        startTime = Optional.empty();
     }
 
     public Task(String title, String description, Status status, LocalDateTime startTime, Duration duration) {
@@ -96,6 +95,6 @@ public class Task {
     }
 
     public Optional<LocalDateTime> getStartTime() {
-        return startTime == null ? Optional.empty() : startTime;
+        return startTime == null? Optional.empty() : startTime;
     }
 }

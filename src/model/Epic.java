@@ -15,15 +15,19 @@ public class Epic extends Task {
         super(title, description, status);
     }
 
-    public boolean setSubtask(int id) {
+    public void setSubtask(int id) {
+        if (subtasks == null) {
+            subtasks = new HashSet<>();
+        }
         if (this.getId() != id) {
             subtasks.add(id);
-            return true;
         }
-        return false;
     }
 
     public void setSubtasks(HashSet<Integer> subtasks) {
+        if (subtasks == null) {
+            subtasks = new HashSet<>();
+        }
         this.subtasks = subtasks;
     }
 
@@ -34,6 +38,9 @@ public class Epic extends Task {
     }
 
     public HashSet<Integer> getSubtasks() {
+        if (subtasks == null) {
+            subtasks = new HashSet<>();
+        }
         return subtasks;
     }
 
