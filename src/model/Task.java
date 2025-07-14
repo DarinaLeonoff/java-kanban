@@ -13,16 +13,15 @@ public class Task {
     private String title;
     private String description;
     private Status status;
-    protected Duration duration;
-    protected Optional<LocalDateTime> startTime;
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("DD/MM/YY HH:mm");
+    protected Duration duration = Duration.ZERO;
+    protected Optional<LocalDateTime> startTime = Optional.empty();
+    //без transient появляется ошибка при вызове gson.fromJson()
+    private transient DateTimeFormatter formatter = DateTimeFormatter.ofPattern("DD/MM/YY HH:mm");
 
     public Task(String title, String description, Status status) {
         this.title = title;
         this.description = description;
         this.status = status;
-        duration = Duration.ZERO;
-        startTime = Optional.empty();
     }
 
     public Task(String title, String description, Status status, LocalDateTime startTime, Duration duration) {
@@ -60,10 +59,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format(
-                "\nmodel.Task{title=%s, description=%s, id=%d, status=%s, start=%s, duration=%d min, " + "end=%s %s}\n",
-                title, description, id, status, startTime.get().format(formatter), duration.toMinutes(),
-                getEndTime().get().format(formatter), this.getClass());
+        return String.format("\nmodel.Task{title=%s, description=%s, id=%d, status=%s, start=%s, duration=%d min, " + "end=%s %s}\n", title, description, id, status, startTime.<Object>map(localDateTime -> localDateTime.format(formatter)).orElse(null), duration.toMinutes(), getEndTime().<Object>map(localDateTime -> localDateTime.format(formatter)).orElse(null), this.getClass());
     }
 
     public String getTitle() {
@@ -91,10 +87,10 @@ public class Task {
     }
 
     public Duration getDuration() {
-        return duration;
+        return duration == null ? Duration.ZERO : duration;
     }
 
     public Optional<LocalDateTime> getStartTime() {
-        return startTime;
+        return startTime == null ? Optional.empty() : startTime;
     }
 }
